@@ -1,3 +1,5 @@
+package bioinformat
+
 import java.nio.charset.StandardCharsets
 
 import akka.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
@@ -7,10 +9,8 @@ import akka.util.ByteString
 import scala.collection.mutable
 import scala.util.{Failure, Success, Try}
 
-/**
- * A flow that can parse Fasta formated files.
- */
-class FastaProcessor extends GraphStage[FlowShape[ByteString, FastaEntry]] {
+object FastaProcessor extends GraphStage[FlowShape[ByteString, FastaEntry]] {
+
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
 
     private var chunkAccumulator = StringBuilder.newBuilder
@@ -24,15 +24,15 @@ class FastaProcessor extends GraphStage[FlowShape[ByteString, FastaEntry]] {
         Success(chunk.span(_ != '\n'))
       }
 
-    def parseSequence(rest: String): Try[String] = Try(rest.filter(_ != '\n'))
+    private def parseSequence(rest: String): Try[String] = Try(rest.filter(_ != '\n'))
 
-    def extractEntry(chunk: String): Try[FastaEntry] =
+    private def extractEntry(chunk: String): Try[FastaEntry] =
       for {
         (header, rest) <- parseHeader(chunk)
         sequence <- parseSequence(rest)
       } yield FastaEntry(header, sequence)
 
-    def chopOfEntry( builder: StringBuilder): (String, mutable.StringBuilder) = {
+    private def chopOfEntry( builder: StringBuilder): (String, mutable.StringBuilder) = {
       val startOfNextEntry = builder.tail.indexWhere(_ == '>') + 1
       val (seq, rest) = builder.splitAt(startOfNextEntry)
       (seq.result(), rest)
@@ -40,21 +40,24 @@ class FastaProcessor extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
     private def containsCompleteEntries( accum: mutable.StringBuilder): Boolean = accum.count(_ == '>') > 1
 
-
     setHandler(in, new InHandler {
       override def onPush(): Unit = {
         chunkAccumulator ++= grab(in).decodeString(StandardCharsets.UTF_8)
-        while (containsCompleteEntries(chunkAccumulator)) {
-          val (seq, rest) = chopOfEntry(chunkAccumulator)
-          chunkAccumulator = rest
-          val entry = extractEntry(seq)
-          if(entry.isSuccess) {
-            processedEntries.enqueue(entry.get)
-          } else {
-            // fail silently: muhahahahahah evil laugh
+        if (containsCompleteEntries(chunkAccumulator)) {
+          while (containsCompleteEntries(chunkAccumulator)) {
+            val (seq, rest) = chopOfEntry(chunkAccumulator)
+            chunkAccumulator = rest
+            val entry = extractEntry(seq)
+            if (entry.isSuccess) {
+              processedEntries.enqueue(entry.get)
+            } else {
+              // fail silently: muhahahahahah evil laugh
+            }
           }
+          push(out, processedEntries.dequeue)
+        } else {
+          pull(in)
         }
-        push(out, processedEntries.dequeue)
       }
 
       override def onUpstreamFinish(): Unit = {
@@ -75,8 +78,8 @@ class FastaProcessor extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
   }
 
-  val in = Inlet[ByteString]("input")
-  val out = Outlet[FastaEntry]("output")
+  val in: Inlet[ByteString] = Inlet[ByteString]("input")
+  val out: Outlet[FastaEntry] = Outlet[FastaEntry]("output")
 
   override def shape: FlowShape[ByteString, FastaEntry] = FlowShape(in, out)
 }
