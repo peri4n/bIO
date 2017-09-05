@@ -1,15 +1,22 @@
-package bioinformat
+package at.bioinform
 
 import java.nio.charset.StandardCharsets
+import java.nio.file.{Path, Paths}
 
+import akka.stream.scaladsl.{FileIO, Source}
 import akka.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
-import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
+import akka.stream._
 import akka.util.ByteString
 
 import scala.collection.mutable
+import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 object FastaProcessor extends GraphStage[FlowShape[ByteString, FastaEntry]] {
+
+  def from( path: Path): Source[FastaEntry, Future[IOResult]] = {
+    FileIO.fromPath(path).via(FastaProcessor)
+  }
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
 
