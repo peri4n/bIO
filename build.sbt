@@ -14,4 +14,4 @@ lazy val codec = (project in file("codec")).settings(
 
 lazy val webapp = (project in file("webapp")).settings(
   commonSettings
-)
+).enablePlugins(PlayScala)
