@@ -3,5 +3,10 @@ import { render } from 'react-dom';
 
 render((
     <div>
-        <h1>Playframework, React JS, ES 6 and webpack</h1>
+        <form>
+            <label for="search-bar">
+              Search bar:
+            </label>
+            <input type="text" name="search-term" id="search-bar"/>
+        </form>
     </div>), document.getElementById("app"));
