@@ -20,3 +20,6 @@ project/plugins/project/
 # IntelliJ
 /out/
 .idea/
+.gitignore
+app/views/
+public/
