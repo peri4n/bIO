@@ -20,6 +20,6 @@ project/plugins/project/
 # IntelliJ
 /out/
 .idea/
-
-# npm
-node_modules/
+.gitignore
+app/views/
+public/
