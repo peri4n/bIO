@@ -23,3 +23,7 @@ project/plugins/project/
 .gitignore
 app/views/
 public/
+
+# Mac OS
+
+.DS_Store
