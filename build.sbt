@@ -8,13 +8,16 @@ lazy val commonSettings = Seq(
   resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
 )
 
-lazy val codec = (project in file("codec")).settings(
-  commonSettings
-)
+lazy val codec = (project in file("codec"))
+  .settings(
+    commonSettings
+  )
 
-lazy val webapp = (project in file("webapp")).settings(
-  commonSettings
-).enablePlugins(PlayScala)
+lazy val webapp = (project in file("webapp"))
+  .dependsOn(codec)
+  .settings(
+    commonSettings
+  ).enablePlugins(PlayScala)
 
 scalariformSettings(true)
 
