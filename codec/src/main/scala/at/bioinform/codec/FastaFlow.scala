@@ -1,4 +1,4 @@
-package at.bioinform
+package at.bioinform.codec
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
@@ -12,10 +12,19 @@ import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-object FastaProcessor extends GraphStage[FlowShape[ByteString, FastaEntry]] {
+/**
+ * Flow that parses an incoming byte stream representing FASTA-formatted sequence data.
+ */
+object FastaFlow extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
+  /**
+   * Utility method to easily create a processor from a given path.
+   *
+   * @param path path to a FASTA formatted file.
+   * @return a flow porviding [[FastaEntry]]s
+   */
   def from(path: Path): Source[FastaEntry, Future[IOResult]] = {
-    FileIO.fromPath(path).via(FastaProcessor)
+    FileIO.fromPath(path).via(FastaFlow)
   }
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
@@ -24,11 +33,14 @@ object FastaProcessor extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
     private val processedEntries = new mutable.Queue[FastaEntry]()
 
-    def parseHeader(chunk: String): Try[(String, String)] =
+    def parseHeader(chunk: String): Try[(FastaHeader, String)] =
       if (!chunk.startsWith(">")) {
         Failure(new RuntimeException(s"Expected a '>' at the start of a fasta entry but read: '${chunk.head}'"))
       } else {
-        Success(chunk.span(_ != '\n'))
+        val (headerLine, rest) = chunk.tail.span(_ != '\n')
+        val (id, desc) = headerLine.span(_ != ' ')
+        val maybeDescription = if (desc.isEmpty) None else Some(desc.trim)
+        Success(FastaHeader(id, maybeDescription), rest)
       }
 
     private def parseSequence(rest: String): Try[String] = Try(rest.filter(_ != '\n'))

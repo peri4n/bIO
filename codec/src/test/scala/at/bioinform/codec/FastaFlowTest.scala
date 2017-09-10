@@ -1,4 +1,4 @@
-package at.bioinform
+package at.bioinform.codec
 
 import java.nio.file.Paths
 
@@ -8,7 +8,7 @@ import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.TestKit
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike}
 
-class FastaProcessorTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunSpecLike with BeforeAndAfterAll {
+class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunSpecLike with BeforeAndAfterAll {
 
   implicit val materializer = ActorMaterializer()
 
@@ -17,23 +17,42 @@ class FastaProcessorTest extends TestKit(ActorSystem("FastaProcessorTest")) with
   }
 
   describe("A FASTA processor") {
-    it("should parse the dna1 file.") {
-      FastaProcessor.from(Paths.get(getClass.getResource("/fasta/dna1.fasta").toURI))
+    it("should parse a very standard FASTA file.") {
+      FastaFlow.from(Paths.get(getClass.getResource("/fasta/fasta_easy.fa").toURI))
         .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
           FastaEntry(
-            ">Test1",
+            "Test1",
             """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
               |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA
               |TATAGGCATAGCGCACAGACAGATAAAAATTACAGAGTACACAACATCCATGAAACGCATTAGCACCACC
               |ATTACCACCACCATCACCATTACCACAGGTAACGGTGCGGGCTGACGCGTACAGGAAACACAGAAAAAAG""".stripMargin.filter(_.isLetter)),
           FastaEntry(
-            ">Test2",
+            "Test2",
             """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
               |GTTCGGCGGTACATCAGTGGCAAATGCAGAACGTTTTCTGCGTGTTGCCGATATTCTGGAAAGCAATGCC
               |AGGCAGGGGCAGGTGGCCACCGTCCTCTCTGCCCCCGCCAAAATCACCAACCACCTGGTGGCGATGATTG
               |AAAAAACCATTAGCGGCCAGGATGCTTTACCCAATATCAGCGATGCCGAACGTATTTTTGCCGAACTTTT""".stripMargin.filter(_.isLetter)))
+        .expectComplete()
+    }
+
+    it("should parse a FASTA file containing sequence descriptions.") {
+      FastaFlow.from(Paths.get(getClass.getResource("/fasta/fasta_with_descriptions.fa").toURI))
+        .runWith(TestSink.probe[FastaEntry])
+        .request(2)
+        .expectNext(
+          FastaEntry(
+            "At1g02580",
+            Some("mRNA (2291 bp) UTR's and CDS"),
+            """aggcgagtggttaatggagaaggaaaaccatgaggacgatggtgagggtttgccacccgaactaaatcagataaaa
+              |gagcaaatcgaaaaggagagattctgcat""".stripMargin.filter(_.isLetter)),
+          FastaEntry(
+            "At1g65300:",
+            Some("mRNA 837bp"),
+            """atgaagagaaagatgaagttatcgttaatagaaaacagtgtatcgaggaaaacaacattcaccaaaaggaagaaag
+              |ggatgacgaagaaactaaccgagctagtcactctatgtggtgttgaagcatgtgcggtcgtctatagtccgttcaa
+              |gaccggaccaagaagatggtggatcaagagacttttataagtcaaaggatcg""".stripMargin.filter(_.isLetter)))
         .expectComplete()
     }
   }
