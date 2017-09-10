@@ -16,7 +16,13 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
     TestKit.shutdownActorSystem(system)
   }
 
-  describe("A FASTA processor") {
+  describe("A FastaFlow") {
+    it("should parse an empty file.") {
+      FastaFlow.from(Paths.get(getClass.getResource("/fasta/fasta_empty.fa").toURI))
+        .runWith(TestSink.probe[FastaEntry])
+        .request(10)
+        .expectComplete()
+    }
     it("should parse a very standard FASTA file.") {
       FastaFlow.from(Paths.get(getClass.getResource("/fasta/fasta_easy.fa").toURI))
         .runWith(TestSink.probe[FastaEntry])

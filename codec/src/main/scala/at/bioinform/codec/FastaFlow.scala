@@ -80,8 +80,10 @@ object FastaFlow extends GraphStage[FlowShape[ByteString, FastaEntry]] {
       }
 
       override def onUpstreamFinish(): Unit = {
-        val (_, seq) = chopOfEntry(chunkAccumulator)
-        push(out, extractEntry(seq.result()).get)
+        if(!chunkAccumulator.isEmpty) {
+          val (_, seq) = chopOfEntry(chunkAccumulator)
+          push(out, extractEntry(seq.result()).get)
+        }
         super.onUpstreamFinish()
       }
     })
