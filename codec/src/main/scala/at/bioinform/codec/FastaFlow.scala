@@ -52,19 +52,23 @@ object FastaFlow extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
       override def onPush(): Unit = {
         val line = grab(in).decodeString(StandardCharsets.UTF_8).trim
-        if (isHeaderLine(line) && currentHeader.isEmpty) { // first header line
-          currentHeader = Some(parseHeader(line).get)
+        if (line.isEmpty) {
           pull(in)
-        } else if (isHeaderLine(line) && currentHeader.isDefined) {
-          push(out, FastaEntry(currentHeader.get, sequenceBuilder.result()))
-          sequenceBuilder.clear()
-          currentHeader = Some(parseHeader(line).get)
-        } else { // a sequence file
-          sequenceBuilder ++= line
-          pull(in)
+        } else {
+          if (isHeaderLine(line) && currentHeader.isEmpty) { // first header line
+            currentHeader = Some(parseHeader(line).get)
+            pull(in)
+          } else if (isHeaderLine(line) && currentHeader.isDefined) {
+            push(out, FastaEntry(currentHeader.get, sequenceBuilder.result()))
+            sequenceBuilder.clear()
+            currentHeader = Some(parseHeader(line).get)
+          } else { // a sequence file
+            sequenceBuilder ++= line
+            pull(in)
+          }
         }
       }
-
+      
       override def onUpstreamFinish(): Unit = {
         if (sequenceBuilder.nonEmpty) {
           push(out, FastaEntry(currentHeader.get, sequenceBuilder.result()))

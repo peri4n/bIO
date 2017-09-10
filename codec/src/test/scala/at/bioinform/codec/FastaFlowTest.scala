@@ -23,6 +23,7 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
         .request(10)
         .expectComplete()
     }
+
     it("should parse a very standard FASTA file.") {
       FastaFlow.from(Paths.get(getClass.getResource("/fasta/fasta_easy.fa").toURI))
         .runWith(TestSink.probe[FastaEntry])
@@ -40,6 +41,22 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
               |GTTCGGCGGTACATCAGTGGCAAATGCAGAACGTTTTCTGCGTGTTGCCGATATTCTGGAAAGCAATGCC
               |AGGCAGGGGCAGGTGGCCACCGTCCTCTCTGCCCCCGCCAAAATCACCAACCACCTGGTGGCGATGATTG
               |AAAAAACCATTAGCGGCCAGGATGCTTTACCCAATATCAGCGATGCCGAACGTATTTTTGCCGAACTTTT""".stripMargin.filter(_.isLetter)))
+        .expectComplete()
+    }
+
+    it("should parse a FASTA file with empty lines.") {
+      FastaFlow.from(Paths.get(getClass.getResource("/fasta/fasta_with_empty_lines.fa").toURI))
+        .runWith(TestSink.probe[FastaEntry])
+        .request(2)
+        .expectNext(
+          FastaEntry(
+            "Test1",
+            """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
+              |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA""".stripMargin.filter(_.isLetter)),
+          FastaEntry(
+            "Test2",
+            """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
+              |GTTCGGCGGTACATCAGTGGCAAATGCAGAACGTTTTCTGCGTGTTGCCGATATTCTGGAAAGCAATGCC""".stripMargin.filter(_.isLetter)))
         .expectComplete()
     }
 
