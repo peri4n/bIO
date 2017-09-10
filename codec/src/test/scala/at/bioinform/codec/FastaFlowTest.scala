@@ -60,6 +60,22 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
         .expectComplete()
     }
 
+    it("should parse a FASTA file with comments.") {
+      FastaFlow.from(Paths.get(getClass.getResource("/fasta/fasta_with_comments.fa").toURI))
+        .runWith(TestSink.probe[FastaEntry])
+        .request(2)
+        .expectNext(
+          FastaEntry(
+            "Test1",
+            """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
+              |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA""".stripMargin.filter(_.isLetter)),
+          FastaEntry(
+            "Test2",
+            """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
+              |GTTCGGCGGTACATCAGTGGCAAATGCAGAACGTTTTCTGCGTGTTGCCGATATTCTGGAAAGCAATGCC""".stripMargin.filter(_.isLetter)))
+        .expectComplete()
+    }
+
     it("should parse a FASTA file containing sequence descriptions.") {
       FastaFlow.from(Paths.get(getClass.getResource("/fasta/fasta_with_descriptions.fa").toURI))
         .runWith(TestSink.probe[FastaEntry])

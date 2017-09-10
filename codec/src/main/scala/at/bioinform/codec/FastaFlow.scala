@@ -52,7 +52,7 @@ object FastaFlow extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
       override def onPush(): Unit = {
         val line = grab(in).decodeString(StandardCharsets.UTF_8).trim
-        if (line.isEmpty) {
+        if (line.isEmpty || line.startsWith("#")) {
           pull(in)
         } else {
           if (isHeaderLine(line) && currentHeader.isEmpty) { // first header line
@@ -68,7 +68,7 @@ object FastaFlow extends GraphStage[FlowShape[ByteString, FastaEntry]] {
           }
         }
       }
-      
+
       override def onUpstreamFinish(): Unit = {
         if (sequenceBuilder.nonEmpty) {
           push(out, FastaEntry(currentHeader.get, sequenceBuilder.result()))
