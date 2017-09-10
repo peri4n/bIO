@@ -15,3 +15,16 @@ lazy val codec = (project in file("codec")).settings(
 lazy val webapp = (project in file("webapp")).settings(
   commonSettings
 ).enablePlugins(PlayScala)
+
+scalariformSettings(true)
+
+com.typesafe.sbt.SbtScalariform.ScalariformKeys.preferences := {
+  import scalariform.formatter.preferences._
+  FormattingPreferences()
+    .setPreference(AlignArguments, true)
+    .setPreference(AlignSingleLineCaseStatements, true)
+    .setPreference(AlignSingleLineCaseStatements.MaxArrowIndent, 20)
+    .setPreference(DanglingCloseParenthesis, Prevent)
+    .setPreference(CompactControlReadability, false)
+    .setPreference(SpacesAroundMultiImports, false)
+}

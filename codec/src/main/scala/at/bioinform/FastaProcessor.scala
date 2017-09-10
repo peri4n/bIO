@@ -1,11 +1,11 @@
 package at.bioinform
 
 import java.nio.charset.StandardCharsets
-import java.nio.file.{Path, Paths}
+import java.nio.file.Path
 
+import akka.stream._
 import akka.stream.scaladsl.{FileIO, Source}
 import akka.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
-import akka.stream._
 import akka.util.ByteString
 
 import scala.collection.mutable
@@ -14,7 +14,7 @@ import scala.util.{Failure, Success, Try}
 
 object FastaProcessor extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
-  def from( path: Path): Source[FastaEntry, Future[IOResult]] = {
+  def from(path: Path): Source[FastaEntry, Future[IOResult]] = {
     FileIO.fromPath(path).via(FastaProcessor)
   }
 
@@ -39,13 +39,13 @@ object FastaProcessor extends GraphStage[FlowShape[ByteString, FastaEntry]] {
         sequence <- parseSequence(rest)
       } yield FastaEntry(header, sequence)
 
-    private def chopOfEntry( builder: StringBuilder): (String, mutable.StringBuilder) = {
+    private def chopOfEntry(builder: StringBuilder): (String, mutable.StringBuilder) = {
       val startOfNextEntry = builder.tail.indexWhere(_ == '>') + 1
       val (seq, rest) = builder.splitAt(startOfNextEntry)
       (seq.result(), rest)
     }
 
-    private def containsCompleteEntries( accum: mutable.StringBuilder): Boolean = accum.count(_ == '>') > 1
+    private def containsCompleteEntries(accum: mutable.StringBuilder): Boolean = accum.count(_ == '>') > 1
 
     setHandler(in, new InHandler {
       override def onPush(): Unit = {
