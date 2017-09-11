@@ -6,6 +6,7 @@ import akka.stream.scaladsl.{Flow, Framing, Keep, Sink}
 import akka.util.ByteString
 import at.bioinform.codec.{FastaEntry, FastaFlow}
 import play.api.Logger
+import play.api.libs.json.{Json, Writes}
 import play.api.libs.streams.Accumulator
 import play.api.mvc.{BaseController, BodyParser, ControllerComponents}
 
@@ -28,8 +29,16 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     Accumulator(sink).map(Right.apply)
   }
 
+  implicit val toJson = new Writes[FastaEntry] {
+    override def writes(o: FastaEntry) = Json.obj(
+      "id" -> o.header.id,
+      "description" -> o.header.description,
+      "sequence" -> o.sequence
+    )
+  }
+
   def upload = Action(bp) { request =>
-    Ok(s"File uploaded: ${request.body.mkString("\n")}")
+    Ok(Json.toJson(request.body))
   }
 
 }
