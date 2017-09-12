@@ -1,4 +1,4 @@
-package at.bioinform.codec
+package at.bioinform.codec.fasta
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path

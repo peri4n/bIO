@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import akka.stream.scaladsl.{Flow, Framing, Keep, Sink}
 import akka.util.ByteString
-import at.bioinform.codec.{FastaEntry, FastaFlow}
+import at.bioinform.codec.fasta.{FastaEntry, FastaFlow}
 import play.api.Logger
 import play.api.libs.json.{Json, Writes}
 import play.api.libs.streams.Accumulator
@@ -12,7 +12,7 @@ import play.api.mvc.{BaseController, BodyParser, ControllerComponents}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class HomeController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+class HomeController @Inject() (val controllerComponents: ControllerComponents) extends BaseController {
 
   val logger: Logger = Logger(this.getClass())
 
@@ -33,8 +33,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     override def writes(o: FastaEntry) = Json.obj(
       "id" -> o.header.id,
       "description" -> o.header.description,
-      "sequence" -> o.sequence
-    )
+      "sequence" -> o.sequence)
   }
 
   def upload = Action(bp) { request =>
