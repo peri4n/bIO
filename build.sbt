@@ -8,13 +8,18 @@ lazy val commonSettings = Seq(
   resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
 )
 
-lazy val codec = (project in file("codec"))
+lazy val stream = (project in file("stream"))
+  .settings(
+    commonSettings
+  )
+
+lazy val lucene = (project in file("lucene"))
   .settings(
     commonSettings
   )
 
 lazy val webapp = (project in file("webapp"))
-  .dependsOn(codec)
+  .dependsOn(stream)
   .settings(
     commonSettings
   ).enablePlugins(PlayScala)

@@ -1,3 +1,3 @@
-name := "webapp"
+name := "bIO-webapp"
 
 libraryDependencies += guice
