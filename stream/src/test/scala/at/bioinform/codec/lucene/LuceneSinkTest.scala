@@ -49,7 +49,7 @@ class LuceneSinkTest extends TestKit(ActorSystem("FastaProcessorTest")) with Fun
       val t1 = new Term("sequence", "AGCT")
       val seqQuery = new TermQuery(t1)
       val seqTopDocs = searcher.search(seqQuery, 10)
-      seqTopDocs.scoreDocs.map( _.doc ) should contain theSameElementsInOrderAs Array(1, 0)
+      seqTopDocs.scoreDocs.map(_.doc) should contain theSameElementsInOrderAs Array(1, 0)
       seqTopDocs.totalHits should be(2)
 
       val t2 = new Term("id", "Test")

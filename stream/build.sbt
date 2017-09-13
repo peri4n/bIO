@@ -1,4 +1,4 @@
-name := "bIO-codec"
+name := "bIO-stream"
 
 // akka
 libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.3"
