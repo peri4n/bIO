@@ -3,7 +3,9 @@ package at.bioinform.codec.lucene
 import akka.stream.stage.{GraphStageLogic, GraphStageWithMaterializedValue, InHandler}
 import akka.stream.{Attributes, Inlet, SinkShape}
 import at.bioinform.codec.fasta.FastaEntry
+import at.bioinform.lucene.Util
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer
+import org.apache.lucene.analysis.ngram.NGramTokenizer
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.store.Directory
@@ -24,7 +26,7 @@ case class LuceneSink(directory: Directory, transformer: FastaEntry => Document)
 
       private var indexedSequences = 0
 
-      private val writer = new IndexWriter(directory, new IndexWriterConfig(new WhitespaceAnalyzer()))
+      private val writer = new IndexWriter(directory, new IndexWriterConfig(Util.analyzer))
 
       override def preStart(): Unit = {
         pull(in)
