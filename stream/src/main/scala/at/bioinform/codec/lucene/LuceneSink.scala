@@ -3,6 +3,7 @@ package at.bioinform.codec.lucene
 import akka.stream.stage.{GraphStageLogic, GraphStageWithMaterializedValue, InHandler}
 import akka.stream.{Attributes, Inlet, SinkShape}
 import at.bioinform.codec.fasta.FastaEntry
+import at.bioinform.lucene.Util
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer
 import org.apache.lucene.analysis.ngram.NGramTokenizer
 import org.apache.lucene.document.Document
