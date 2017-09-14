@@ -15,7 +15,9 @@ class DnaTokenizerTest extends org.scalatest.FunSpecLike {
     it("should correctly tokenize a string.") {
       val reader = new StringReader("ACTATTAGCACGGG")
 
-      val analyzer = CustomAnalyzer.builder().withTokenizer("ngram", mutable.Map("minGramSize" -> "3", "maxGramSize" -> "4").asJava).build()
+      val analyzer = CustomAnalyzer.builder()
+        .withTokenizer("ngram", mutable.Map("minGramSize" -> "3", "maxGramSize" -> "4").asJava)
+        .build()
       val stream = analyzer.tokenStream("test", reader)
 
       val offsetAtt = stream.addAttribute(classOf[OffsetAttribute])

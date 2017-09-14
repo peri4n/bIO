@@ -9,20 +9,16 @@ lazy val commonSettings = Seq(
 )
 
 lazy val stream = (project in file("stream"))
-  .settings(
-    commonSettings
-  )
+  .dependsOn(lucene)
+  .settings(commonSettings)
 
 lazy val lucene = (project in file("lucene"))
-  .settings(
-    commonSettings
-  )
+  .settings(commonSettings)
 
 lazy val webapp = (project in file("webapp"))
   .dependsOn(stream)
-  .settings(
-    commonSettings
-  ).enablePlugins(PlayScala)
+  .settings(commonSettings)
+  .enablePlugins(PlayScala)
 
 scalariformSettings(true)
 
