@@ -2,8 +2,6 @@ package at.bioinform.codec.lucene
 
 import java.nio.file.Paths
 
-import java.nio.file.Paths
-
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{FileIO, Framing}
