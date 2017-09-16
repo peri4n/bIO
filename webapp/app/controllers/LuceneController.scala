@@ -2,8 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
-import akka.stream.SinkShape
-import akka.stream.scaladsl.{Broadcast, Framing, GraphDSL, Sink}
+import akka.stream.scaladsl.{Flow, Framing, Keep}
 import akka.util.ByteString
 import at.bioinform.codec.fasta.{FastaEntry, FastaFlow}
 import at.bioinform.codec.lucene.LuceneSink
@@ -15,37 +14,23 @@ import play.api.libs.streams.Accumulator
 import play.api.mvc.{BaseController, BodyParser, ControllerComponents}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class LuceneController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
 
   val logger = Logger(this.getClass())
 
-  val bp: BodyParser[List[FastaEntry]] = BodyParser { req =>
+  val bp: BodyParser[List[String]] = BodyParser { req =>
     logger.info("Incoming requst: " + req)
-
-    val sink: Sink[FastaEntry, Future[List[FastaEntry]]] = Sink.fold(List.empty[FastaEntry])(_ :+ _)
-
-    val g = Sink.fromGraph(GraphDSL.create(sink) { implicit builder =>
-      import GraphDSL.Implicits._
-      sink =>
-
-        val splitter = builder.add(Framing.delimiter(ByteString(System.lineSeparator()), 200))
-        val fasta = builder.add(FastaFlow)
-        val lucene = builder.add(LuceneSink(new RAMDirectory(), entry => {
-          val document = new Document()
-          document.add(new Field("id", entry.header.id, TextField.TYPE_STORED))
-          document.add(new Field("sequence", entry.sequence, TextField.TYPE_STORED))
-          document
-        }))
-        val bcast = builder.add(Broadcast[FastaEntry](2))
-
-        splitter ~> fasta ~> bcast ~> sink.in
-        bcast ~> lucene
-        SinkShape(splitter.in)
-    })
-
-    Accumulator(g).map(Right.apply)
+    val sink = Flow[ByteString]
+      .via(Framing.delimiter(ByteString(System.lineSeparator()), 200))
+      .via(FastaFlow)
+      .toMat(LuceneSink(new RAMDirectory(), entry => {
+        val document = new Document()
+        document.add(new Field("id", entry.header.id, TextField.TYPE_STORED))
+        document.add(new Field("sequence", entry.sequence, TextField.TYPE_STORED))
+        document
+      }))(Keep.right)
+    Accumulator(sink).map(Right.apply)
   }
 
   implicit val toJson = new Writes[FastaEntry] {

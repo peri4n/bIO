@@ -9,4 +9,5 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
   }
+
 }
