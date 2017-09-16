@@ -40,7 +40,7 @@ class LuceneSinkTest extends TestKit(ActorSystem("FastaProcessorTest")) with Fun
         }))
 
       val indexedSequences = Await.result(future, 2 seconds)
-      indexedSequences should be(2)
+      indexedSequences should be(List("Test", "Test"))
 
       val searcher = new IndexSearcher(DirectoryReader.open(index))
 

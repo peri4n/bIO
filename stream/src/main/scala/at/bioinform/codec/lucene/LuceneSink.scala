@@ -11,8 +11,7 @@ import org.apache.lucene.store.Directory
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{Future, Promise}
 
-case class LuceneSink(directory: Directory, transformer: FastaEntry => Document) extends
-  GraphStageWithMaterializedValue[SinkShape[FastaEntry], Future[List[String]]] {
+case class LuceneSink(directory: Directory, transformer: FastaEntry => Document) extends GraphStageWithMaterializedValue[SinkShape[FastaEntry], Future[List[String]]] {
 
   val in: Inlet[FastaEntry] = Inlet("input")
 

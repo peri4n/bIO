@@ -15,7 +15,7 @@ import play.api.mvc.{BaseController, BodyParser, ControllerComponents}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class LuceneController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+class LuceneController @Inject() (val controllerComponents: ControllerComponents) extends BaseController {
 
   val logger = Logger(this.getClass())
 
