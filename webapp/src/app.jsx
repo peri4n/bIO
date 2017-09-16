@@ -4,7 +4,10 @@ import { render } from 'react-dom';
 class FileUpload extends React.Component {
     render() {
         return (
-            <input type="file" onChange={event => this.logFile(event)}/>
+            <div>
+                <input type="file" onChange={event => this.logFile(event)} action="javascript:void(0);" />
+                <div id="ids" />
+            </div>
         );
     }
 
@@ -13,11 +16,10 @@ class FileUpload extends React.Component {
         const reader = new FileReader();
 
         reader.onload = function () {
-            console.log(reader.result)
             const oReq = new XMLHttpRequest();
-            oReq.open("POST", "http://localhost:9000/", true);
+            oReq.open("POST", "http://localhost:9000/index/add", true);
             oReq.onload = () => {
-                console.log(oReq.response);
+                document.getElementById("ids").innerHTML = JSON.parse(oReq.responseText).join(" ")
             };
             oReq.send(reader.result);
         };

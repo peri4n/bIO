@@ -25,10 +25,10 @@ class DnaTokenizerTest extends org.scalatest.FunSpecLike {
       stream.reset()
 
       while (stream.incrementToken) {
-//        println("[" + termAtt.toString + "]")
-//        println("Token starting offset: " + offsetAtt.startOffset)
-//        println(" Token ending offset: " + offsetAtt.endOffset)
-//        println("")
+        //        println("[" + termAtt.toString + "]")
+        //        println("Token starting offset: " + offsetAtt.startOffset)
+        //        println(" Token ending offset: " + offsetAtt.endOffset)
+        //        println("")
       }
 
       stream.end()
