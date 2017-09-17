@@ -1,30 +1,12 @@
 import React from 'react';
-import { render } from 'react-dom';
+import {render} from 'react-dom';
+import FileUpload from './file_upload.jsx';
+import SearchBar from './search_bar.jsx';
 
-class FileUpload extends React.Component {
-    render() {
-        return (
-            <div>
-                <input type="file" onChange={event => this.logFile(event)} action="javascript:void(0);" />
-                <div id="ids" />
-            </div>
-        );
-    }
-
-    logFile(event) {
-        const input = event.target;
-        const reader = new FileReader();
-
-        reader.onload = function () {
-            const oReq = new XMLHttpRequest();
-            oReq.open("POST", "http://localhost:9000/index/add", true);
-            oReq.onload = () => {
-                document.getElementById("ids").innerHTML = JSON.parse(oReq.responseText).join(" ")
-            };
-            oReq.send(reader.result);
-        };
-        reader.readAsBinaryString(input.files[0]);
-    }
-}
-
-render(<FileUpload />, document.getElementById("app"));
+render(
+    (<div style={{width: '500px', marginLeft: 'auto', marginRight: 'auto'}}>
+        <p/>
+        <SearchBar/>
+        <p/>
+        <FileUpload/>
+    </div>), document.getElementById("app"));
