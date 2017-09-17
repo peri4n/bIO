@@ -17,9 +17,11 @@ export default class FileUpload extends React.Component {
         reader.onload = function () {
             const oReq = new XMLHttpRequest();
             oReq.open("POST", "http://localhost:9000/index/add", true);
+
             oReq.onload = () => {
                 document.getElementById("ids").innerHTML = JSON.parse(oReq.responseText).join(" ")
             };
+
             oReq.send(reader.result);
         };
         reader.readAsBinaryString(input.files[0]);

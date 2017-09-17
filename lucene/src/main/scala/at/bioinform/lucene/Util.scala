@@ -16,6 +16,6 @@ object Util {
     mutable.Map[String, Analyzer]("sequence" -> CustomAnalyzer.builder()
       .withTokenizer(
         classOf[NGramTokenizerFactory],
-        mutable.Map("minGramSize" -> "3", "maxGramSize" -> "4").asJava)
+        mutable.Map("minGramSize" -> "6", "maxGramSize" -> "6").asJava)
       .build()).asJava)
 }
