@@ -15,7 +15,16 @@ export default class SearchBar extends React.Component {
     }
 
     handleSubmit(event) {
-        console.log('A name was submitted: ' + this.state.value);
+        const oReq = new XMLHttpRequest();
+        oReq.open("GET", "http://localhost:9000/index/search?sequence=" + this.state.value, true);
+        oReq.setRequestHeader('Content-Type', 'text/plain');
+
+        oReq.onload = () => {
+            document.getElementById("result").innerHTML = oReq.responseText
+        };
+
+        oReq.send();
+
         event.preventDefault();
     }
 
@@ -27,6 +36,7 @@ export default class SearchBar extends React.Component {
                     <input type="text" name="search-term" id="search-bar" value={this.state.value} onChange={this.handleChange}/>
                 </label>
                 <input type="submit" value="Submit" />
+                <div id="result"/>
             </form>
         );
     }

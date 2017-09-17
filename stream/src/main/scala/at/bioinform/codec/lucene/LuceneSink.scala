@@ -43,6 +43,7 @@ case class LuceneSink(directory: Directory, transformer: FastaEntry => Document)
         override def onUpstreamFinish(): Unit = {
           super.onUpstreamFinish()
           writer.commit()
+          directory.close()
           promise.trySuccess(indexedIds.result())
         }
       })
