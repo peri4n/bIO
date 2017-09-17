@@ -8,7 +8,6 @@ var config = {
     target: 'web',
     entry: {
         app: path.join(srcPath, 'app.jsx')
-        //, common: ['react-dom', 'react']
     },
     output: {
         path:path.resolve(__dirname, 'public/javascripts'),
