@@ -1,5 +1,5 @@
 name := "bIO-webapp"
 
-libraryDependencies += guice
+routesGenerator := InjectedRoutesGenerator
 
 libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "6.6.0"
