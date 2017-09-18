@@ -1,7 +1,6 @@
 package controllers
 
 import java.nio.file.Paths
-import javax.inject.Inject
 
 import akka.stream.scaladsl.{Flow, Framing, Keep}
 import akka.util.ByteString
@@ -9,9 +8,9 @@ import at.bioinform.codec.fasta.{FastaEntry, FastaFlow}
 import at.bioinform.codec.lucene.LuceneSink
 import at.bioinform.lucene.Util
 import org.apache.lucene.document.{Document, Field, TextField}
-import org.apache.lucene.index.{DirectoryReader, IndexReader, Term}
+import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.search.{IndexSearcher, TermQuery}
+import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.store.SimpleFSDirectory
 import play.api.Logger
 import play.api.libs.json.{JsNumber, JsString, Json, Writes}
@@ -20,7 +19,7 @@ import play.api.mvc.{BaseController, BodyParser, ControllerComponents}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class LuceneController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+class LuceneController(val controllerComponents: ControllerComponents) extends BaseController {
 
   val logger = Logger(this.getClass)
 
