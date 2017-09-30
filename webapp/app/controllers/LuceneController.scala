@@ -54,13 +54,12 @@ class LuceneController(val controllerComponents: ControllerComponents) extends B
     val reader = DirectoryReader.open(new SimpleFSDirectory(Paths.get("target/database")))
     val searcher = new IndexSearcher(reader)
 
-    val query = new QueryParser("sequence", Util.analyzer).parse(sequence.get)
+    val query = new QueryParser("sequence", Util.analyzer(6, 6)).parse(sequence.get)
     val docs = searcher.search(query, 10)
     reader.close()
 
     Ok(Json.obj(
       "hits" -> Json.arr(docs.scoreDocs.map(d => JsString(d.toString))),
-      "total" -> JsNumber(docs.totalHits)
-    ))
+      "total" -> JsNumber(docs.totalHits)))
   }
 }

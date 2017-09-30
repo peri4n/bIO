@@ -11,11 +11,14 @@ import scala.collection.mutable
 
 object Util {
 
-  def analyzer = new PerFieldAnalyzerWrapper(
+  def analyzer(minNGramSize: Int, maxNGramSize: Int) = new PerFieldAnalyzerWrapper(
     new WhitespaceAnalyzer(),
     mutable.Map[String, Analyzer]("sequence" -> CustomAnalyzer.builder()
       .withTokenizer(
         classOf[NGramTokenizerFactory],
-        mutable.Map("minGramSize" -> "6", "maxGramSize" -> "6").asJava)
+        mutable.Map(
+          "minGramSize" -> minNGramSize.toString,
+          "maxGramSize" -> maxNGramSize.toString)
+          .asJava)
       .build()).asJava)
 }

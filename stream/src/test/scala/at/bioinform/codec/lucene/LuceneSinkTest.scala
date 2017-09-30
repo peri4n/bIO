@@ -1,6 +1,6 @@
 package at.bioinform.codec.lucene
 
-import java.nio.file.Paths
+import java.nio.file.{Files, Paths}
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
@@ -11,7 +11,7 @@ import at.bioinform.codec.fasta.FastaFlow
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.{DirectoryReader, Term}
 import org.apache.lucene.search.{IndexSearcher, TermQuery}
-import org.apache.lucene.store.RAMDirectory
+import org.apache.lucene.store.{MMapDirectory, RAMDirectory}
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike, Matchers}
 
 import scala.concurrent.Await
@@ -27,9 +27,10 @@ class LuceneSinkTest extends TestKit(ActorSystem("FastaProcessorTest")) with Fun
 
   describe("A LuceneSink") {
     it("should index FastaEntries") {
-      val index = new RAMDirectory()
+      val path = Files.createTempDirectory("test")
+      val index = new MMapDirectory(path)
 
-      val future = FileIO.fromPath(Paths.get(getClass.getResource("/lucene/fasta_easy.fa").toURI))
+      val future = FileIO.fromPath(Paths.get(getClass.getResource("/at/bioinform/lucene/fasta_easy.fa").toURI))
         .via(Framing.delimiter(ByteString(System.lineSeparator()), 200))
         .via(FastaFlow)
         .runWith(LuceneSink(index, entry => {
@@ -42,9 +43,9 @@ class LuceneSinkTest extends TestKit(ActorSystem("FastaProcessorTest")) with Fun
       val indexedSequences = Await.result(future, 2 seconds)
       indexedSequences should be(List("Test", "Test"))
 
-      val searcher = new IndexSearcher(DirectoryReader.open(index))
+      val searcher = new IndexSearcher(DirectoryReader.open(new MMapDirectory(path)))
 
-      val t1 = new Term("sequence", "AGCT")
+      val t1 = new Term("sequence", "AGCTTT")
       val seqQuery = new TermQuery(t1)
       val seqTopDocs = searcher.search(seqQuery, 10)
       seqTopDocs.scoreDocs.map(_.doc) should contain theSameElementsInOrderAs Array(1, 0)
@@ -54,8 +55,6 @@ class LuceneSinkTest extends TestKit(ActorSystem("FastaProcessorTest")) with Fun
       val idQuery = new TermQuery(t2)
       val idTopDocs = searcher.search(idQuery, 10)
       idTopDocs.totalHits should be(2)
-
-      index.close()
     }
   }
 
