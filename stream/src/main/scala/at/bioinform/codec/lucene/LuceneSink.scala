@@ -25,7 +25,7 @@ case class LuceneSink(directory: Directory, transformer: FastaEntry => Document)
 
       private var indexedIds = ListBuffer.empty[String]
 
-      private val writer = new IndexWriter(directory, new IndexWriterConfig(Util.analyzer))
+      private val writer = new IndexWriter(directory, new IndexWriterConfig(Util.analyzer(6, 6)))
 
       override def preStart(): Unit = {
         pull(in)
