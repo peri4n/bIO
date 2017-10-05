@@ -12,14 +12,13 @@ lazy val stream = (project in file("stream"))
   .dependsOn(lucene)
   .settings(commonSettings)
 
-lazy val Benchmark = config("bench") extend Compile
-
 lazy val lucene = (project in file("lucene"))
   .settings(commonSettings)
-  .configs(Benchmark)
-  .settings(
-    inConfig(Benchmark)( Defaults.testSettings )
-  )
+
+lazy val bench = (project in file("bench"))
+  .dependsOn(lucene)
+  .settings(commonSettings)
+  .enablePlugins(JmhPlugin)
 
 lazy val webapp = (project in file("webapp"))
   .dependsOn(stream)
