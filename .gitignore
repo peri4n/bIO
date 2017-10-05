@@ -25,5 +25,7 @@ app/views/
 public/
 
 # Mac OS
-
 .DS_Store
+
+# Downloaded test fixtures
+bench/src/test/resources/hg38.fa

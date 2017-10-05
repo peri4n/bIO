@@ -11,6 +11,14 @@ import org.apache.lucene.store.Directory
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{Future, Promise}
 
+/**
+  * A sink that stores all incoming [[FastaEntry]] inside a Lucene [[Directory]].
+  *
+  * The provided directory is closed after the stream is run.
+  *
+  * @param directory Lucene index where the FASTA entries should be stored.
+  * @param transformer Converts FASTA entries to documents
+  */
 case class LuceneSink(directory: Directory, transformer: FastaEntry => Document) extends GraphStageWithMaterializedValue[SinkShape[FastaEntry], Future[List[String]]] {
 
   val in: Inlet[FastaEntry] = Inlet("input")

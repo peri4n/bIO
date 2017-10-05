@@ -1,4 +1,4 @@
-package at.bioinform.lucene
+package at.bioinform.codec
 
 import java.io.StringReader
 

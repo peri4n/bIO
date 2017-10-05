@@ -8,11 +8,11 @@ lazy val commonSettings = Seq(
   resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
 )
 
-lazy val stream = (project in file("stream"))
-  .dependsOn(lucene)
+lazy val lucene = (project in file("lucene"))
   .settings(commonSettings)
 
-lazy val lucene = (project in file("lucene"))
+lazy val stream = (project in file("stream"))
+  .dependsOn(lucene)
   .settings(commonSettings)
 
 lazy val bench = (project in file("bench"))

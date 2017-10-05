@@ -1,6 +1,6 @@
 package at.bioinform.lucene
 
-import at.bioinform.lucene.DnaTokenizerFactory._
+import DnaTokenizerFactory._
 import org.apache.lucene.analysis.util.TokenizerFactory
 import org.apache.lucene.util.AttributeFactory
 
