@@ -30,11 +30,12 @@ class IndexBenchmark {
   @Setup
   def setUp(): Unit = {
     writer = new IndexWriter(new RAMDirectory(), new IndexWriterConfig(Util.analyzer(8, 8)))
-    sequence = randomSequence(42, SequenceSize)
+    sequence = DnaGenerator.randomSequence(new Random(42), SequenceSize)
   }
 
   def tearDown(): Unit = {
     writer.commit()
+    writer.close()
   }
 
   @Benchmark
@@ -43,25 +44,5 @@ class IndexBenchmark {
     document.add(new Field("id", "test", TextField.TYPE_STORED))
     document.add(new Field("sequence", sequence, FieldType))
     writer.addDocument(document)
-  }
-
-  def randomSequence(seed: Long, length: Int): String = {
-    val random = new Random(seed)
-
-    val builder = new StringBuilder(length)
-    for (_ <- 0 until length) {
-      builder += randomNuc(random)
-    }
-
-    builder.result()
-  }
-
-  def randomNuc(random: Random): Char = {
-    random.nextInt(4) match {
-      case 0 => 'a'
-      case 1 => 'c'
-      case 2 => 'g'
-      case 3 => 't'
-    }
   }
 }
