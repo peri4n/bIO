@@ -12,7 +12,7 @@ lazy val lucene = (project in file("lucene"))
   .settings(commonSettings)
 
 lazy val tools = (project in file("tools"))
-  .dependsOn(lucene)
+  .dependsOn(stream)
   .settings(commonSettings)
 
 lazy val stream = (project in file("stream"))
