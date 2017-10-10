@@ -32,9 +32,7 @@ object GenomeIndexer {
 
     val index = new MMapDirectory(outputFile)
 
-    val future = FileIO.fromPath(fastaFile)
-      .via(Framing.delimiter(ByteString(System.lineSeparator()), 200))
-      .via(FastaFlow)
+    val future = FastaFlow.from(fastaFile)
       .runWith(LuceneSink(index, entry => {
         Logger.info("Indexing {} ", entry.header.id)
         val document = new Document()

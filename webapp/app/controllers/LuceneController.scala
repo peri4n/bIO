@@ -24,9 +24,7 @@ class LuceneController(val controllerComponents: ControllerComponents) extends B
   val logger = Logger(this.getClass)
 
   val bp: BodyParser[List[String]] = BodyParser { req =>
-    val sink = Flow[ByteString]
-      .via(Framing.delimiter(ByteString(System.lineSeparator()), 200))
-      .via(FastaFlow)
+    val sink = FastaFlow()
       .toMat(LuceneSink(new SimpleFSDirectory(Paths.get("target/database")), entry => {
         val document = new Document()
         document.add(new Field("id", entry.header.id, TextField.TYPE_STORED))
