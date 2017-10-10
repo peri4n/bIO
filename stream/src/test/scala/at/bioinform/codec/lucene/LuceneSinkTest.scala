@@ -4,14 +4,12 @@ import java.nio.file.{Files, Paths}
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{FileIO, Framing}
 import akka.testkit.TestKit
-import akka.util.ByteString
 import at.bioinform.codec.fasta.FastaFlow
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.{DirectoryReader, Term}
 import org.apache.lucene.search.{IndexSearcher, TermQuery}
-import org.apache.lucene.store.{MMapDirectory, RAMDirectory}
+import org.apache.lucene.store.MMapDirectory
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike, Matchers}
 
 import scala.concurrent.Await
@@ -30,9 +28,7 @@ class LuceneSinkTest extends TestKit(ActorSystem("FastaProcessorTest")) with Fun
       val path = Files.createTempDirectory("test")
       val index = new MMapDirectory(path)
 
-      val future = FileIO.fromPath(Paths.get(getClass.getResource("/at/bioinform/codec/fasta_easy.fa").toURI))
-        .via(Framing.delimiter(ByteString(System.lineSeparator()), 200))
-        .via(FastaFlow)
+      val future = FastaFlow.from(getClass.getResource("/at/bioinform/codec/lucene/fasta_easy.fa").toURI)
         .runWith(LuceneSink(index, entry => {
           val document = new Document()
           document.add(new Field("id", entry.header.id, TextField.TYPE_STORED))
