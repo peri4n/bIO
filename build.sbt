@@ -8,23 +8,23 @@ lazy val commonSettings = Seq(
   resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
 )
 
-lazy val lucene = (project in file("lucene"))
+lazy val lucene = (project in file("subprojects/lucene"))
   .settings(commonSettings)
 
-lazy val tools = (project in file("tools"))
+lazy val tools = (project in file("subprojects/tools"))
   .dependsOn(stream)
   .settings(commonSettings)
 
-lazy val stream = (project in file("stream"))
+lazy val stream = (project in file("subprojects/stream"))
   .dependsOn(lucene)
   .settings(commonSettings)
 
-lazy val bench = (project in file("bench"))
+lazy val bench = (project in file("subprojects/bench"))
   .dependsOn(lucene)
   .settings(commonSettings)
   .enablePlugins(JmhPlugin)
 
-lazy val webapp = (project in file("webapp"))
+lazy val webapp = (project in file("subprojects/webapp"))
   .dependsOn(stream)
   .settings(commonSettings)
   .enablePlugins(PlayScala)
