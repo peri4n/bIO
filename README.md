@@ -28,6 +28,10 @@ To run the application run:
 
 `sbt webapp/run`
 
+## Algorithmic
+
+All used algorithms are described on [this page](docs/algorithms.md).
+
 ## License
 
 Copyright (C) 2009-2017 Fabian Bull (https://www.bioinform.at/)
