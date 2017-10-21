@@ -1,6 +1,12 @@
 package at.bioinform.stream.fasta
 
-case class FastaEntry(header: FastaHeader, sequence: String)
+import at.bioinform.lucene.Segment
+
+case class FastaEntry(header: FastaHeader, sequence: String) extends Segment {
+
+  val id = header.id
+
+}
 
 object FastaEntry {
 

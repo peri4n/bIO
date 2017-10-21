@@ -29,7 +29,7 @@ class IndexBenchmark {
 
   @Setup
   def setUp(): Unit = {
-    writer = new IndexWriter(new RAMDirectory(), new IndexWriterConfig(Analyzer.ngram(8, 8)))
+    writer = new IndexWriter(new RAMDirectory(), new IndexWriterConfig(Analyzers.ngram(8, 8)))
     sequence = DnaGenerator.randomSequence(new Random(42), SequenceSize)
   }
 

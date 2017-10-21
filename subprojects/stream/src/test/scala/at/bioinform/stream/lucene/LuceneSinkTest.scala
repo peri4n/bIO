@@ -29,8 +29,8 @@ class LuceneSinkTest extends TestKit(ActorSystem("FastaProcessorTest")) with Fun
       val path = Files.createTempDirectory("test")
       val index = new MMapDirectory(path)
 
-      val future = FastaFlow.from(getClass.getResource("/at/bioinform/codec/lucene/fasta_easy.fa").toURI)
-        .runWith(LuceneSink(index, Splitter.default, entry => {
+      val future = FastaFlow.from(getClass.getResource("/at/bioinform/stream/lucene/fasta_easy.fa").toURI)
+        .runWith(LuceneSink(index, null, entry => {
           val document = new Document()
           document.add(new Field("id", entry.header.id, TextField.TYPE_STORED))
           document.add(new Field("sequence", entry.sequence, TextField.TYPE_STORED))

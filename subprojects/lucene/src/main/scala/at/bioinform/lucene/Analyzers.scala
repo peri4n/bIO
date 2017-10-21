@@ -9,7 +9,7 @@ import org.apache.lucene.analysis.ngram.NGramTokenizerFactory
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
-object Analyzer {
+object Analyzers {
 
   def ngram(minNGramSize: Int, maxNGramSize: Int) = {
     val nGramTokenizerParameter = mutable.Map(

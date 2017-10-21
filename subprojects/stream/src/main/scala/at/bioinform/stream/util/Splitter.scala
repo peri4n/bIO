@@ -6,19 +6,30 @@ package at.bioinform.stream.util
  * Note, that for performance reasons we do not split strings but StringBuilders.
  *
  */
-case class Splitter(maxSize: Int, overlap: Int) {
+trait Splitter extends (StringBuilder => (StringBuilder, String)) {
 
-  require(maxSize > 0, "The maximal size of a splitter should be positive.")
-  require(overlap > -1, "The overlap of a splitter should not be negative.")
-  require(maxSize > overlap, "The maximal size of a splitter must be larger than it's overlap.")
-
-  def split(chain: StringBuilder): (StringBuilder, String) = {
-    if (chain.size >= maxSize - overlap) {
-      (chain.drop(maxSize - overlap), chain.substring(0, maxSize))
-    } else {
-      (new StringBuilder(), chain.substring(0, chain.size))
-    }
-  }
-
+  def split = apply _
 }
 
+object Splitter {
+
+  /** Applies no splitting at all, the entire builder result is returned. */
+  val noop = new Splitter {
+    override def apply(chain: StringBuilder) = (new StringBuilder(), chain.result())
+  }
+
+  /** Splits a string into chunks of given size. */
+  def withSize(size: Int, overlap: Int = 0) = new Splitter {
+    require(size > 0, "The size of a splitter should be positive.")
+    require(overlap > -1, "The overlap of a splitter should not be negative.")
+    require(size > overlap, "The size of a splitter must be larger than it's overlap.")
+
+    override def apply(chain: StringBuilder) = {
+      if (chain.size >= size - overlap) {
+        (chain.drop(size - overlap), chain.substring(0, size))
+      } else {
+        (new StringBuilder(), chain.substring(0, chain.size))
+      }
+    }
+  }
+}

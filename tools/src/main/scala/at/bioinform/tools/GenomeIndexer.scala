@@ -8,9 +8,11 @@ import akka.stream.scaladsl.{FileIO, Framing}
 import akka.util.ByteString
 import at.bioinform.stream.fasta.FastaFlow
 import at.bioinform.stream.lucene.LuceneSink
+import at.bioinform.stream.util.Splitter
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.store.MMapDirectory
 import org.slf4j.LoggerFactory
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object GenomeIndexer {
@@ -33,7 +35,7 @@ object GenomeIndexer {
     val index = new MMapDirectory(outputFile)
 
     val future = FastaFlow.from(fastaFile)
-      .runWith(LuceneSink(index, entry => {
+      .runWith(LuceneSink(index, null, entry => {
         Logger.info("Indexing {} ", entry.header.id)
         val document = new Document()
         document.add(new Field("id", entry.header.id, TextField.TYPE_STORED))
