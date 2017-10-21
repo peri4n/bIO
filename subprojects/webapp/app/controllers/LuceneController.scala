@@ -6,7 +6,7 @@ import akka.stream.scaladsl.{Flow, Framing, Keep}
 import akka.util.ByteString
 import at.bioinform.stream.fasta.{FastaEntry, FastaFlow}
 import at.bioinform.stream.lucene.LuceneSink
-import at.bioinform.lucene.Util
+import at.bioinform.lucene.Analyzer
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
@@ -52,7 +52,7 @@ class LuceneController(val controllerComponents: ControllerComponents) extends B
     val reader = DirectoryReader.open(new SimpleFSDirectory(Paths.get("target/database")))
     val searcher = new IndexSearcher(reader)
 
-    val query = new QueryParser("sequence", Util.analyzer(6, 6)).parse(sequence.get)
+    val query = new QueryParser("sequence", Analyzer.ngram(6, 6)).parse(sequence.get)
     val docs = searcher.search(query, 10)
     reader.close()
 

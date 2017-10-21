@@ -1,15 +1,13 @@
-package at.bioinform.stream.fasta
+package at.bioinform.lucene
 
 import org.apache.lucene.document.{Document, Field, TextField}
 
 /**
- * A transformer takes a thing and returns a document ready for Lucene indexing.
- */
+  * Collection of built-in transformers.
+  */
 object Transformer {
 
-  type Transformer[A] = (A, Document)
-
-  val default: Transformer[FastaEntry] = (entry: FastaEntry) => {
+  val default: Transformer[Segment] = (entry: Segment) => {
     val document = new Document()
     document.add(new Field("id", entry.header.id, TextField.TYPE_STORED))
     document.add(new Field("sequence", entry.sequence, TextField.TYPE_STORED))

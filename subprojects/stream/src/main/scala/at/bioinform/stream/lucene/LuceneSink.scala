@@ -2,8 +2,9 @@ package at.bioinform.stream.lucene
 
 import akka.stream.stage.{GraphStageLogic, GraphStageWithMaterializedValue, InHandler}
 import akka.stream.{Attributes, Inlet, SinkShape}
-import at.bioinform.stream.fasta.{FastaEntry, Splitter}
-import at.bioinform.lucene.Util
+import at.bioinform.stream.fasta.FastaEntry
+import at.bioinform.lucene.Analyzer
+import at.bioinform.stream.util.Splitter
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.store.Directory
@@ -19,7 +20,7 @@ import scala.concurrent.{Future, Promise}
  * @param directory Lucene index where the FASTA entries should be stored.
  * @param transformer Converts FASTA entries to documents
  */
-case class LuceneSink(directory: Directory, splitter: Splitter, transformer: FastaEntry => Document) extends GraphStageWithMaterializedValue[SinkShape[FastaEntry], Future[List[String]]] {
+case class LuceneSink[A](directory: Directory, splitter: Splitter, transformer: A => Document) extends GraphStageWithMaterializedValue[SinkShape[FastaEntry], Future[List[String]]] {
 
   val in: Inlet[FastaEntry] = Inlet("input")
 
@@ -33,7 +34,7 @@ case class LuceneSink(directory: Directory, splitter: Splitter, transformer: Fas
 
       private var indexedIds = ListBuffer.empty[String]
 
-      private val writer = new IndexWriter(directory, new IndexWriterConfig(Util.analyzer(6, 6)))
+      private val writer = new IndexWriter(directory, new IndexWriterConfig(Analyzer.ngram(6, 6)))
 
       override def preStart(): Unit = {
         pull(in)

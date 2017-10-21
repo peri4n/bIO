@@ -6,6 +6,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.testkit.TestKit
 import at.bioinform.stream.fasta.FastaFlow
+import at.bioinform.stream.util.Splitter
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.{DirectoryReader, Term}
 import org.apache.lucene.search.{IndexSearcher, TermQuery}
@@ -29,7 +30,7 @@ class LuceneSinkTest extends TestKit(ActorSystem("FastaProcessorTest")) with Fun
       val index = new MMapDirectory(path)
 
       val future = FastaFlow.from(getClass.getResource("/at/bioinform/codec/lucene/fasta_easy.fa").toURI)
-        .runWith(LuceneSink(index, entry => {
+        .runWith(LuceneSink(index, Splitter.default, entry => {
           val document = new Document()
           document.add(new Field("id", entry.header.id, TextField.TYPE_STORED))
           document.add(new Field("sequence", entry.sequence, TextField.TYPE_STORED))

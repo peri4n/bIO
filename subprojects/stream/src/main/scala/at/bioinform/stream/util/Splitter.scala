@@ -1,4 +1,4 @@
-package at.bioinform.stream.fasta
+package at.bioinform.stream.util
 
 /**
  * A Splitter splits strings into chunks of a specified size with a given overlap.
