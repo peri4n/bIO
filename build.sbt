@@ -11,7 +11,7 @@ lazy val commonSettings = Seq(
 lazy val lucene = (project in file("subprojects/lucene"))
   .settings(commonSettings)
 
-lazy val tools = (project in file("subprojects/tools"))
+lazy val tools = (project in file("tools"))
   .dependsOn(stream)
   .settings(commonSettings)
 
@@ -19,7 +19,7 @@ lazy val stream = (project in file("subprojects/stream"))
   .dependsOn(lucene)
   .settings(commonSettings)
 
-lazy val bench = (project in file("subprojects/bench"))
+lazy val bench = (project in file("benchmarks"))
   .dependsOn(lucene)
   .settings(commonSettings)
   .enablePlugins(JmhPlugin)

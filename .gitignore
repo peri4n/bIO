@@ -28,4 +28,4 @@ public/
 .DS_Store
 
 # Downloaded test fixtures
-subprojects/bench/src/test/resources/hg38.fa
+benchmarks/src/test/resources/hg38.fa

@@ -2,7 +2,7 @@ package at.bioinform.codec.lucene
 
 import akka.stream.stage.{GraphStageLogic, GraphStageWithMaterializedValue, InHandler}
 import akka.stream.{Attributes, Inlet, SinkShape}
-import at.bioinform.codec.fasta.FastaEntry
+import at.bioinform.codec.fasta.{FastaEntry, Splitter}
 import at.bioinform.lucene.Util
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
@@ -19,7 +19,7 @@ import scala.concurrent.{Future, Promise}
  * @param directory Lucene index where the FASTA entries should be stored.
  * @param transformer Converts FASTA entries to documents
  */
-case class LuceneSink(directory: Directory, transformer: FastaEntry => Document) extends GraphStageWithMaterializedValue[SinkShape[FastaEntry], Future[List[String]]] {
+case class LuceneSink(directory: Directory, splitter: Splitter ,transformer: FastaEntry => Document) extends GraphStageWithMaterializedValue[SinkShape[FastaEntry], Future[List[String]]] {
 
   val in: Inlet[FastaEntry] = Inlet("input")
 
