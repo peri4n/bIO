@@ -1,4 +1,4 @@
-package at.bioinform.codec
+package at.bioinform.stream
 
 import java.io.StringReader
 

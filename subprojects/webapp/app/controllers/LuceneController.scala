@@ -4,8 +4,8 @@ import java.nio.file.Paths
 
 import akka.stream.scaladsl.{Flow, Framing, Keep}
 import akka.util.ByteString
-import at.bioinform.codec.fasta.{FastaEntry, FastaFlow}
-import at.bioinform.codec.lucene.LuceneSink
+import at.bioinform.stream.fasta.{FastaEntry, FastaFlow}
+import at.bioinform.stream.lucene.LuceneSink
 import at.bioinform.lucene.Util
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.DirectoryReader

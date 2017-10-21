@@ -1,10 +1,10 @@
-package at.bioinform.codec.fasta
+package at.bioinform.stream.fasta
 
 import org.apache.lucene.document.{Document, Field, TextField}
 
 /**
-  * A transformer takes a thing and returns a document ready for Lucene indexing.
-  */
+ * A transformer takes a thing and returns a document ready for Lucene indexing.
+ */
 object Transformer {
 
   type Transformer[A] = (A, Document)

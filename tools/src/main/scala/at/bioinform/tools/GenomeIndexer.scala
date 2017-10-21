@@ -6,8 +6,8 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{FileIO, Framing}
 import akka.util.ByteString
-import at.bioinform.codec.fasta.FastaFlow
-import at.bioinform.codec.lucene.LuceneSink
+import at.bioinform.stream.fasta.FastaFlow
+import at.bioinform.stream.lucene.LuceneSink
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.store.MMapDirectory
 import org.slf4j.LoggerFactory

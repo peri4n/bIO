@@ -1,11 +1,11 @@
-package at.bioinform.codec.lucene
+package at.bioinform.stream.lucene
 
 import java.nio.file.{Files, Paths}
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.testkit.TestKit
-import at.bioinform.codec.fasta.FastaFlow
+import at.bioinform.stream.fasta.FastaFlow
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.{DirectoryReader, Term}
 import org.apache.lucene.search.{IndexSearcher, TermQuery}

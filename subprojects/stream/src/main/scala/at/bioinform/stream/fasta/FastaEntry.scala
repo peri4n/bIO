@@ -1,4 +1,4 @@
-package at.bioinform.codec.fasta
+package at.bioinform.stream.fasta
 
 case class FastaEntry(header: FastaHeader, sequence: String)
 

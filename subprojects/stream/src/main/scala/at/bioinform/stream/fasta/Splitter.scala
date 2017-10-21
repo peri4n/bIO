@@ -1,11 +1,11 @@
-package at.bioinform.codec.fasta
+package at.bioinform.stream.fasta
 
 /**
-  * A Splitter splits strings into chunks of a specified size with a given overlap.
-  *
-  * Note, that for performance reasons we do not split strings but StringBuilders.
-  *
-  */
+ * A Splitter splits strings into chunks of a specified size with a given overlap.
+ *
+ * Note, that for performance reasons we do not split strings but StringBuilders.
+ *
+ */
 case class Splitter(maxSize: Int, overlap: Int) {
 
   require(maxSize > 0, "The maximal size of a splitter should be positive.")
