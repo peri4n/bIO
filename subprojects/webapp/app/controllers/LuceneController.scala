@@ -7,13 +7,15 @@ import akka.util.ByteString
 import at.bioinform.stream.fasta.{FastaEntry, FastaFlow}
 import at.bioinform.stream.lucene.LuceneSink
 import at.bioinform.lucene.Analyzers
+import at.bioinform.lucene.segment.Segment
+import at.bioinform.stream.util.Splitter
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.store.SimpleFSDirectory
 import play.api.Logger
-import play.api.libs.json.{JsNumber, JsString, Json, Writes}
+import play.api.libs.json._
 import play.api.libs.streams.Accumulator
 import play.api.mvc.{BaseController, BodyParser, ControllerComponents}
 
@@ -24,21 +26,17 @@ class LuceneController(val controllerComponents: ControllerComponents) extends B
   val logger = Logger(this.getClass)
 
   val bp: BodyParser[List[String]] = BodyParser { req =>
-    val sink = FastaFlow()
-      .toMat(LuceneSink(new SimpleFSDirectory(Paths.get("target/database")), null, entry => {
-        val document = new Document()
-        document.add(new Field("id", entry.header.id, TextField.TYPE_STORED))
-        document.add(new Field("sequence", entry.sequence, TextField.TYPE_STORED))
-        document
-      }))(Keep.right)
+    val sink = FastaFlow(Splitter.withSize(10, 2))
+      .via(Flow[Segment].map( _ => new Document()))
+      .toMat(LuceneSink(new SimpleFSDirectory(Paths.get("target/database"))))(Keep.right)
     Accumulator(sink).map(Right.apply)
   }
 
-  implicit val toJson = new Writes[FastaEntry] {
-    override def writes(o: FastaEntry) = Json.obj(
-      "id" -> o.header.id,
-      "description" -> o.header.description,
-      "sequence" -> o.sequence)
+  implicit val toJson = new Writes[Segment] {
+    override def writes(o: Segment) = Json.obj(
+      "id" -> o.id.string,
+      "description" -> Json.parse(o.description.map(_.string).getOrElse("")),
+      "sequence" -> o.sequence.string)
   }
 
   def add = Action(bp) { request =>

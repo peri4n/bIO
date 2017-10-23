@@ -4,7 +4,9 @@ import java.nio.file.{Files, Paths}
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.Flow
 import akka.testkit.TestKit
+import at.bioinform.lucene.segment.Segment
 import at.bioinform.stream.fasta.FastaFlow
 import at.bioinform.stream.util.Splitter
 import org.apache.lucene.document.{Document, Field, TextField}
@@ -29,13 +31,9 @@ class LuceneSinkTest extends TestKit(ActorSystem("FastaProcessorTest")) with Fun
       val path = Files.createTempDirectory("test")
       val index = new MMapDirectory(path)
 
-      val future = FastaFlow.from(getClass.getResource("/at/bioinform/stream/lucene/fasta_easy.fa").toURI)
-        .runWith(LuceneSink(index, null, entry => {
-          val document = new Document()
-          document.add(new Field("id", entry.header.id, TextField.TYPE_STORED))
-          document.add(new Field("sequence", entry.sequence, TextField.TYPE_STORED))
-          document
-        }))
+      val future = FastaFlow.from(getClass.getResource("/at/bioinform/stream/lucene/fasta_easy.fa").toURI, Splitter.noop)
+          .via(Flow[Segment].map( _ => new Document()))
+        .runWith(LuceneSink(index))
 
       val indexedSequences = Await.result(future, 2 seconds)
       indexedSequences should be(List("Test", "Test"))

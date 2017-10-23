@@ -1,19 +1,15 @@
 package at.bioinform.stream.fasta
 
-import at.bioinform.lucene.Segment
+/**
+  * An entry stored in a [[https://en.wikipedia.org/wiki/FASTA_format FASTA]] formatted file.
+  *
+  * @param id An identifier
+  * @param description A description
+  * @param sequence A biological sequnece (e.g. DNA, RNA, ...)
+  */
+case class FastaEntry(id: String, description: Option[String], sequence: String) {
 
-case class FastaEntry(header: FastaHeader, sequence: String) extends Segment {
-
-  val id = header.id
-
-}
-
-object FastaEntry {
-
-  def apply(header: FastaHeader, sequence: String): FastaEntry = new FastaEntry(header, sequence)
-
-  def apply(id: String, description: Option[String], sequence: String): FastaEntry = new FastaEntry(FastaHeader(id, description), sequence)
-
-  def apply(id: String, sequence: String): FastaEntry = this(id, None, sequence)
+  def this(id: String, sequence: String) = this(id, None, sequence)
 
 }
+

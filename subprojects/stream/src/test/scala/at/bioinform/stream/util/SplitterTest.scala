@@ -1,6 +1,5 @@
-package at.bioinform.stream.fasta
+package at.bioinform.stream.util
 
-import at.bioinform.stream.util.Splitter
 import org.scalatest.{FunSpec, Matchers}
 
 class SplitterTest extends FunSpec with Matchers {
