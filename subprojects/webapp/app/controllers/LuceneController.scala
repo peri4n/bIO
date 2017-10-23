@@ -2,6 +2,7 @@ package controllers
 
 import java.nio.file.Paths
 
+import akka.stream.IOResult
 import akka.stream.scaladsl.{Flow, Framing, Keep}
 import akka.util.ByteString
 import at.bioinform.stream.fasta.{FastaEntry, FastaFlow}
@@ -25,9 +26,9 @@ class LuceneController(val controllerComponents: ControllerComponents) extends B
 
   val logger = Logger(this.getClass)
 
-  val bp: BodyParser[List[String]] = BodyParser { req =>
+  val bp: BodyParser[IOResult] = BodyParser { req =>
     val sink = FastaFlow(Splitter.withSize(10, 2))
-      .via(Flow[Segment].map( _ => new Document()))
+      .via(Flow[Segment].map(_ => new Document()))
       .toMat(LuceneSink(new SimpleFSDirectory(Paths.get("target/database"))))(Keep.right)
     Accumulator(sink).map(Right.apply)
   }
@@ -40,7 +41,7 @@ class LuceneController(val controllerComponents: ControllerComponents) extends B
   }
 
   def add = Action(bp) { request =>
-    Ok(Json.toJson(request.body))
+    Ok(Json.toJson(request.body.count))
   }
 
   def search = Action { request =>

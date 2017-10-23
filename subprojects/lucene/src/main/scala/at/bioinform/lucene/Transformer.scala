@@ -10,8 +10,8 @@ object Transformer {
 
   val default: Transformer[Segment] = (entry: Segment) => {
     val document = new Document()
-//    document.add(new Field("id", entry.id, TextField.TYPE_STORED))
-//    document.add(new Field("sequence", entry.sequence, TextField.TYPE_STORED))
+    //    document.add(new Field("id", entry.id, TextField.TYPE_STORED))
+    //    document.add(new Field("sequence", entry.sequence, TextField.TYPE_STORED))
     document
   }
 }

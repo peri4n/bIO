@@ -20,19 +20,19 @@ object FastaFlow {
   val FastaCommentStart = ByteString("#")
 
   /**
-    * Utility method to easily create a processor from a given URI.
-    *
-    * @param uri URI to a FASTA formatted file.
-    * @return a flow providing [[Segment]]s
-    */
+   * Utility method to easily create a processor from a given URI.
+   *
+   * @param uri URI to a FASTA formatted file.
+   * @return a flow providing [[Segment]]s
+   */
   def from(uri: URI, splitter: Splitter): Source[Segment, Future[IOResult]] = from(Paths.get(uri), splitter)
 
   /**
-    * Utility method to easily create a processor from a given path.
-    *
-    * @param path path to a FASTA formatted file.
-    * @return a flow providing [[Segment]]s
-    */
+   * Utility method to easily create a processor from a given path.
+   *
+   * @param path path to a FASTA formatted file.
+   * @return a flow providing [[Segment]]s
+   */
   def from(path: Path, splitter: Splitter): Source[Segment, Future[IOResult]] = {
     FileIO.fromPath(path).via(FastaFlow(splitter))
   }
@@ -44,12 +44,12 @@ object FastaFlow {
     .named("FastaFlow")
 
   /**
-    * Filter for lines that are ignored in the FASTA format.
-    *
-    * @param line the line to be checked
-    * @return true if the line is empty or starts with a '#'
-    */
+   * Filter for lines that are ignored in the FASTA format.
+   *
+   * @param line the line to be checked
+   * @return true if the line is empty or starts with a '#'
+   */
   private def ignoreLine(line: ByteString): Boolean = {
-    line.isEmpty || line.startsWith(FastaCommentStart)
+    !(line.isEmpty || line.startsWith(FastaCommentStart))
   }
 }

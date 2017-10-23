@@ -36,7 +36,7 @@ object GenomeIndexer {
     val index = new MMapDirectory(outputFile)
 
     val future = FastaFlow.from(fastaFile, Splitter.noop)
-      .via(Flow[Segment].map( _ => new Document()))
+      .via(Flow[Segment].map(_ => new Document()))
       .runWith(LuceneSink(index))
 
     future.onComplete {

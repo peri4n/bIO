@@ -2,11 +2,11 @@ package at.bioinform.stream.fasta
 
 import java.nio.charset.StandardCharsets
 
-import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
 import akka.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
+import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
 import akka.util.ByteString
-import at.bioinform.lucene.{Desc, Id, Pos}
 import at.bioinform.lucene.segment.Segment
+import at.bioinform.lucene.{Desc, Id, Pos}
 import at.bioinform.stream.util.Splitter
 
 import scala.util.{Failure, Success, Try}
@@ -19,6 +19,9 @@ import scala.util.{Failure, Success, Try}
 private[fasta] case class FastaParser(splitter: Splitter) extends GraphStage[FlowShape[ByteString, Segment]] {
 
   import FastaParser._
+
+  val in: Inlet[ByteString] = Inlet[ByteString]("input")
+  val out: Outlet[Segment] = Outlet[Segment]("output")
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
 
@@ -34,24 +37,30 @@ private[fasta] case class FastaParser(splitter: Splitter) extends GraphStage[Flo
 
       override def onPush(): Unit = {
         val line = grab(in).decodeString(StandardCharsets.UTF_8).trim
-          if (!isHeaderLine(line) && header.isEmpty) {
-            // TODO add error handling
-            // the first non-comment line is not a header
-          } else {
-            if (isHeaderLine(line)) {
-              if (header.isEmpty) { // first header line
-                header = Some(parseHeader(line).get) // TODO add error handling
-                pull(in)
-              }
-            } else { // a sequence line
-              if (splitter.willSplit(sequenceBuilder)) {
-                val (builder, sequence) = splitter.split(sequenceBuilder)
-                offset += sequence.length
-                sequenceBuilder = builder
-                push(out, Segment(header.get._1, sequence, header.get._2, Some(offset)))
-              }
-              sequenceBuilder ++= line
+        if (!isHeaderLine(line) && header.isEmpty) {
+          // TODO add error handling
+          // the first non-comment line is not a header
+        } else {
+          if (isHeaderLine(line)) {
+            if (header.isEmpty) { // first header line
+              header = Some(parseHeader(line).get) // TODO add error handling
               pull(in)
+            } else {
+              val (builder, sequence) = splitter.split(sequenceBuilder)
+              offset += sequence.length
+              sequenceBuilder = builder
+              push(out, Segment(header.get._1, sequence, header.get._2, None))
+              header = Some(parseHeader(line).get) // TODO add error handling
+            }
+          } else { // a sequence line
+            if (splitter.willSplit(sequenceBuilder)) {
+              val (builder, sequence) = splitter.split(sequenceBuilder)
+              offset += sequence.length
+              sequenceBuilder = builder
+              push(out, Segment(header.get._1, sequence, header.get._2, None))
+            }
+            sequenceBuilder ++= line
+            pull(in)
           }
         }
       }
@@ -61,7 +70,7 @@ private[fasta] case class FastaParser(splitter: Splitter) extends GraphStage[Flo
           val (builder, sequence) = splitter.split(sequenceBuilder)
           offset += sequence.length
           sequenceBuilder = builder
-          push(out, Segment(header.get._1, sequence, header.get._2, Some(offset)))
+          push(out, Segment(header.get._1, sequence, header.get._2, None))
         }
         super.onUpstreamFinish()
       }
@@ -74,16 +83,12 @@ private[fasta] case class FastaParser(splitter: Splitter) extends GraphStage[Flo
 
   }
 
-  val in: Inlet[ByteString] = Inlet[ByteString]("input")
-  val out: Outlet[Segment] = Outlet[Segment]("output")
-
   override def shape: FlowShape[ByteString, Segment] = FlowShape(in, out)
 }
 
 object FastaParser {
 
   type Header = (Id, Option[Desc])
-
 
   def parseHeader(chunk: String): Try[Header] =
     if (!chunk.startsWith(">")) {

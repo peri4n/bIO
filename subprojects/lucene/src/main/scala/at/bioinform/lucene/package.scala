@@ -9,7 +9,7 @@ package object lucene {
 
   /** A position in a biological seqence. */
   case class Pos(position: Int) extends AnyVal {
-    def += (pos: Pos) = Pos(position + pos.position)
+    def +=(pos: Pos) = Pos(position + pos.position)
   }
 
   /** An identifier of a biological seqence. */
