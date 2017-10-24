@@ -2,6 +2,9 @@ language: scala
 scala:
    - 2.12.2
 
+env:
+  - CODACY_PROJECT_TOKEN=85d89a4d63654664a7666a1324325dc9
+
 script:
   - sbt clean coverage test coverageReport && sbt coverageAggregate
 
