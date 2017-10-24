@@ -8,6 +8,10 @@ lazy val commonSettings = Seq(
   resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
 )
 
+/** Project dependencies */
+lazy val root = project.in(file("."))
+  .aggregate(lucene, stream, webapp)
+
 lazy val lucene = (project in file("subprojects/lucene"))
   .settings(commonSettings)
 
@@ -30,7 +34,7 @@ lazy val webapp = (project in file("subprojects/webapp"))
   .enablePlugins(PlayScala)
 
 
-
+/** Scalariform settings */
 scalariformSettings(true)
 
 com.typesafe.sbt.SbtScalariform.ScalariformKeys.preferences := {
