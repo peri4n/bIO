@@ -10,10 +10,11 @@ lazy val commonSettings = Seq(
 
 /** Project dependencies */
 lazy val root = project.in(file("."))
+  .settings(commonSettings, coverageSettings)
   .aggregate(lucene, stream, webapp)
 
 lazy val lucene = (project in file("subprojects/lucene"))
-  .settings(commonSettings)
+  .settings(commonSettings, coverageSettings)
 
 lazy val tools = (project in file("tools"))
   .dependsOn(stream)
@@ -21,7 +22,7 @@ lazy val tools = (project in file("tools"))
 
 lazy val stream = (project in file("subprojects/stream"))
   .dependsOn(lucene)
-  .settings(commonSettings)
+  .settings(commonSettings, coverageSettings)
 
 lazy val bench = (project in file("benchmarks"))
   .dependsOn(lucene)
@@ -30,7 +31,7 @@ lazy val bench = (project in file("benchmarks"))
 
 lazy val webapp = (project in file("subprojects/webapp"))
   .dependsOn(stream)
-  .settings(commonSettings)
+  .settings(commonSettings, coverageSettings)
   .enablePlugins(PlayScala)
 
 
@@ -49,4 +50,8 @@ com.typesafe.sbt.SbtScalariform.ScalariformKeys.preferences := {
 }
 
 /** Coverage analysis settings */
-coverageHighlighting := true
+lazy val coverageSettings = Seq(
+  coverageHighlighting := true,
+  CoverallsKeys.coverallsToken := Some("GmAleGF3d361S8q4mPhlCcxRuievlirDi")
+)
+
