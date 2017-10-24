@@ -51,7 +51,6 @@ com.typesafe.sbt.SbtScalariform.ScalariformKeys.preferences := {
 
 /** Coverage analysis settings */
 lazy val coverageSettings = Seq(
-  coverageHighlighting := true,
-  CoverallsKeys.coverallsToken := Some("GmAleGF3d361S8q4mPhlCcxRuievlirDi")
+  coverageHighlighting := true
 )
 
