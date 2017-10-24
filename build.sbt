@@ -47,3 +47,6 @@ com.typesafe.sbt.SbtScalariform.ScalariformKeys.preferences := {
     .setPreference(CompactControlReadability, false)
     .setPreference(SpacesAroundMultiImports, false)
 }
+
+/** Coverage analysis settings */
+coverageHighlighting := true

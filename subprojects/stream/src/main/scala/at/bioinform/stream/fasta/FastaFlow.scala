@@ -37,10 +37,11 @@ object FastaFlow {
     FileIO.fromPath(path).via(FastaFlow(splitter))
   }
 
-  /** A flow that parses [[akka.util.ByteString]] into [[at.bioinform.lucene.segment.Segment]]
-    *
-    * The materialized value is the number of indexed sequences.
-    */
+  /**
+   * A flow that parses [[akka.util.ByteString]] into [[at.bioinform.lucene.segment.Segment]]
+   *
+   * The materialized value is the number of indexed sequences.
+   */
   def apply(splitter: Splitter) = Framing.delimiter(ByteString(System.lineSeparator()), MaxLineSize)
     .via(Flow[ByteString].filter(ignoreLine))
     .via(FastaParser(splitter))
