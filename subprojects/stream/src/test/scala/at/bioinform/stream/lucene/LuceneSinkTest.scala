@@ -32,7 +32,7 @@ class LuceneSinkTest extends TestKit(ActorSystem("FastaProcessorTest")) with Fun
       val index = new MMapDirectory(path)
 
       val future = FastaFlow.from(getClass.getResource("/at/bioinform/stream/lucene/fasta_easy.fa").toURI, Splitter.noop)
-        .via(Flow[Segment].map(_ => new Document()))
+        .via(DocumentFlow())
         .runWith(LuceneSink(index))
 
       val result = Await.result(future, 2 seconds)

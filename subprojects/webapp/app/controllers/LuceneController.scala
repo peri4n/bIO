@@ -3,14 +3,13 @@ package controllers
 import java.nio.file.Paths
 
 import akka.stream.IOResult
-import akka.stream.scaladsl.{Flow, Framing, Keep}
-import akka.util.ByteString
-import at.bioinform.stream.fasta.{FastaEntry, FastaFlow}
-import at.bioinform.stream.lucene.LuceneSink
+import akka.stream.scaladsl.{Flow, Keep}
 import at.bioinform.lucene.Analyzers
 import at.bioinform.lucene.segment.Segment
+import at.bioinform.stream.fasta.FastaFlow
+import at.bioinform.stream.lucene.LuceneSink
 import at.bioinform.stream.util.Splitter
-import org.apache.lucene.document.{Document, Field, TextField}
+import org.apache.lucene.document.Document
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.IndexSearcher
@@ -36,8 +35,8 @@ class LuceneController(val controllerComponents: ControllerComponents) extends B
   implicit val toJson = new Writes[Segment] {
     override def writes(o: Segment) = Json.obj(
       "id" -> o.id.string,
-      "description" -> Json.parse(o.description.map(_.string).getOrElse("")),
-      "sequence" -> o.sequence.string)
+      "description" -> Json.parse(o.description.map(_.value).getOrElse("")),
+      "sequence" -> o.sequence.value)
   }
 
   def add = Action(bp) { request =>
