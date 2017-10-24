@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2f4b737c0e6f437fbef4d2c4fcaea6b9)](https://www.codacy.com/app/peri4n/bIO?utm_source=github.com&utm_medium=referral&utm_content=peri4n/bIO&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/peri4n/bIO.svg?branch=master)](https://travis-ci.org/peri4n/bIO)
 [![Coverage Status](https://coveralls.io/repos/github/peri4n/bIO/badge.svg?branch=master)](https://coveralls.io/github/peri4n/bIO?branch=master)
 
