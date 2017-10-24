@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/peri4n/bIO.svg?branch=master)](https://travis-ci.org/peri4n/bIO)
+[![Coverage Status](https://coveralls.io/repos/github/peri4n/bIO/badge.svg?branch=master)](https://coveralls.io/github/peri4n/bIO?branch=master)
 
 # bIO - A search engine for sequence data
 
