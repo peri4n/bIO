@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/peri4n/bIO.svg?branch=master)](https://travis-ci.org/peri4n/bIO)
-[![Coverage Status](https://coveralls.io/repos/github/peri4n/bIO/badge.svg?branch=master)](https://coveralls.io/github/peri4n/bIO?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2f4b737c0e6f437fbef4d2c4fcaea6b9)](https://www.codacy.com/app/peri4n/bIO?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=peri4n/bIO&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/2f4b737c0e6f437fbef4d2c4fcaea6b9)](https://www.codacy.com/app/peri4n/bIO?utm_source=github.com&utm_medium=referral&utm_content=peri4n/bIO&utm_campaign=Badge_Coverage)
 
 # bIO - A search engine for sequence data
 

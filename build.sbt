@@ -22,7 +22,7 @@ lazy val tools = (project in file("tools"))
   .settings(commonSettings)
 
 lazy val stream = (project in file("subprojects/stream"))
-  .dependsOn(lucene)
+  .dependsOn(lucene % "compile->compile;test->test")
   .settings(commonSettings, coverageSettings)
 
 lazy val bench = (project in file("benchmarks"))
@@ -31,7 +31,7 @@ lazy val bench = (project in file("benchmarks"))
   .enablePlugins(JmhPlugin)
 
 lazy val webapp = (project in file("subprojects/webapp"))
-  .dependsOn(stream)
+  .dependsOn(stream % "compile->compile;test->test")
   .settings(commonSettings, coverageSettings)
   .enablePlugins(PlayScala)
 
