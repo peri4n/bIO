@@ -1,21 +1,22 @@
 package controllers
 
-import java.io.File
-
+import akka.stream.Materializer
+import akka.util.ByteString
 import components.MyComponents
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.components.OneAppPerSuiteWithComponents
-import play.api
-import play.api.{ApplicationLoader, Environment, Mode}
+import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Writeables}
-import play.api.test.Helpers.{GET, route}
 
 class LuceneControllerTest extends PlaySpec with OneAppPerSuiteWithComponents with Writeables {
 
+  implicit lazy val materializer: Materializer = app.materializer
+
   "A LuceneController" must {
     "validates requests" in {
-      route(app, FakeRequest(GET, "/index/search"))
-      components.luceneController.add
+      val result = components.luceneController.add(FakeRequest(POST, "/index/add").withRawBody(ByteString("irsn")))
+      val bodyText: String = contentAsString(result)
+      println(bodyText)
     }
   }
 

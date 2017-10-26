@@ -9,4 +9,3 @@ class MyAppLoader extends ApplicationLoader {
   }
 }
 
-
