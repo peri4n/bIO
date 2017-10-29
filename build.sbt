@@ -33,7 +33,6 @@ lazy val bench = (project in file("benchmarks"))
 lazy val webapp = (project in file("subprojects/webapp"))
   .dependsOn(stream)
   .settings(commonSettings, coverageSettings)
-  .enablePlugins(PlayScala)
 
 
 /** Scalariform settings */
