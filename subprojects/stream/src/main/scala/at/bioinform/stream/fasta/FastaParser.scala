@@ -17,6 +17,12 @@ import scala.util.{Failure, Success, Try}
  */
 private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
+  type Header = (Id, Option[Desc])
+  val in: Inlet[ByteString] = Inlet[ByteString]("input")
+  val out: Outlet[FastaEntry] = Outlet[FastaEntry]("output")
+
+  override def shape: FlowShape[ByteString, FastaEntry] = FlowShape(in, out)
+
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
 
     private var sequenceBuilder = new mutable.StringBuilder(1000)
@@ -27,21 +33,17 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
 
       override def onPush(): Unit = {
         val line = grab(in).decodeString(StandardCharsets.UTF_8).trim
-        if (line.isEmpty || line.startsWith("#")) {
+        if (isHeaderLine(line) && currentHeader.isEmpty) { // first header line
+          currentHeader = Some(parseHeader(line).get)
           pull(in)
-        } else {
-          if (isHeaderLine(line) && currentHeader.isEmpty) { // first header line
-            currentHeader = Some(parseHeader(line).get)
-            pull(in)
-          } else if (isHeaderLine(line) && currentHeader.isDefined) {
-            val (id, desc) = currentHeader.get
-            push(out, FastaEntry(id, desc, Seq(sequenceBuilder.result())))
-            sequenceBuilder.clear()
-            currentHeader = Some(parseHeader(line).get)
-          } else { // a sequence file
-            sequenceBuilder ++= line
-            pull(in)
-          }
+        } else if (isHeaderLine(line) && currentHeader.isDefined) {
+          val (id, desc) = currentHeader.get
+          push(out, FastaEntry(id, desc, Seq(sequenceBuilder.result())))
+          sequenceBuilder.clear()
+          currentHeader = Some(parseHeader(line).get)
+        } else { // a sequence file
+          sequenceBuilder ++= line
+          pull(in)
         }
       }
 
@@ -60,13 +62,6 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
     })
 
   }
-
-  val in: Inlet[ByteString] = Inlet[ByteString]("input")
-  val out: Outlet[FastaEntry] = Outlet[FastaEntry]("output")
-
-  override def shape: FlowShape[ByteString, FastaEntry] = FlowShape(in, out)
-
-  type Header = (Id, Option[Desc])
 
   def parseHeader(chunk: String): Try[Header] =
     if (!chunk.startsWith(">")) {
