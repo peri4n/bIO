@@ -5,7 +5,14 @@ lazy val commonSettings = Seq(
   version := "0.1.0-SNAPSHOT",
   scalaVersion := "2.12.2",
   isSnapshot := true,
-  resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
+  resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/",
+  scalacOptions ++= Seq(
+    // See other posts in the series for other helpful options
+    "-feature",
+    "-language:existentials",
+    "-language:higherKinds",
+    "-language:implicitConversions"
+  )
 )
 
 /** Project dependencies */

@@ -5,11 +5,10 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Flow, Sink}
+import akka.stream.scaladsl.Flow
 import akka.util.ByteString
 import at.bioinform.lucene.segment.Segment
-import at.bioinform.stream.fasta.FastaFlow
-import at.bioinform.stream.util.Splitter
+import at.bioinform.stream.fasta.{FastaFlow, FastaSegmenter}
 
 import scala.io.StdIn
 
@@ -24,17 +23,17 @@ object Application extends App {
   val route =
     path("") {
       get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, Index()))
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, Index()))
       }
     } ~
-  path("fasta") {
-    post {
-      extractDataBytes { data =>
-        val source = data.via(FastaFlow(Splitter.noop)).via(Flow[Segment].map( seg => ByteString(seg.id.string )))
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, source))
+      path("fasta") {
+        post {
+          extractDataBytes { data =>
+            val source = data.via(FastaFlow()).via(FastaSegmenter(10, 2)).via(Flow[Segment].map(seg => ByteString(seg.id.value)))
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, source))
+          }
+        }
       }
-    }
-  }
 
   val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
 

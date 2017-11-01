@@ -23,5 +23,11 @@ class SplitterTest extends FunSpec with Matchers {
       rest should be(new StringBuilder("tient"))
       split should be(Seq("arnstie"))
     }
+
+    it("should not split if it is the noop splitter.") {
+      val (rest, split) = Splitter.noop.split(new StringBuilder("ariesntiaersnt"))
+      rest should be(new StringBuilder())
+      split should be(Seq("ariesntiaersnt"))
+    }
   }
 }

@@ -23,28 +23,28 @@ object FastaFlow {
    * Utility method to easily create a processor from a given URI.
    *
    * @param uri URI to a FASTA formatted file.
-   * @return a flow providing [[Segment]]s
+   * @return a flow providing [[FastaEntry]]s
    */
-  def from(uri: URI, splitter: Splitter): Source[Segment, Future[IOResult]] = from(Paths.get(uri), splitter)
+  def from(uri: URI): Source[FastaEntry, Future[IOResult]] = from(Paths.get(uri))
 
   /**
    * Utility method to easily create a processor from a given path.
    *
    * @param path path to a FASTA formatted file.
-   * @return a flow providing [[Segment]]s
+   * @return a flow providing [[FastaEntry]]s
    */
-  def from(path: Path, splitter: Splitter): Source[Segment, Future[IOResult]] = {
-    FileIO.fromPath(path).via(FastaFlow(splitter))
+  def from(path: Path): Source[FastaEntry, Future[IOResult]] = {
+    FileIO.fromPath(path).via(FastaFlow())
   }
 
   /**
-   * A flow that parses [[akka.util.ByteString]] into [[at.bioinform.lucene.segment.Segment]]
+   * A flow that parses [[akka.util.ByteString]] into [[at.bioinform.stream.fasta.FastaEntry]]
    *
    * The materialized value is the number of indexed sequences.
    */
-  def apply(splitter: Splitter) = Framing.delimiter(ByteString(System.lineSeparator()), MaxLineSize)
+  def apply() = Framing.delimiter(ByteString(System.lineSeparator()), MaxLineSize)
     .via(Flow[ByteString].filter(ignoreLine))
-    .via(FastaParser(splitter))
+    .via(FastaParser)
     .named("FastaFlow")
 
   /**

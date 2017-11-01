@@ -1,15 +1,11 @@
 package at.bioinform.stream.lucene
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.Files
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Flow
 import akka.testkit.TestKit
-import at.bioinform.lucene.segment.Segment
-import at.bioinform.stream.fasta.FastaFlow
-import at.bioinform.stream.util.Splitter
-import org.apache.lucene.document.{Document, Field, TextField}
+import at.bioinform.stream.fasta.{FastaFlow, FastaSegmenter}
 import org.apache.lucene.index.{DirectoryReader, Term}
 import org.apache.lucene.search.{IndexSearcher, TermQuery}
 import org.apache.lucene.store.MMapDirectory
@@ -31,7 +27,8 @@ class LuceneSinkTest extends TestKit(ActorSystem("FastaProcessorTest")) with Fun
       val path = Files.createTempDirectory("test")
       val index = new MMapDirectory(path)
 
-      val future = FastaFlow.from(getClass.getResource("/at/bioinform/stream/lucene/fasta_easy.fa").toURI, Splitter.noop)
+      val future = FastaFlow.from(getClass.getResource("/at/bioinform/stream/lucene/fasta_easy.fa").toURI)
+        .via(FastaSegmenter(10, 2))
         .via(DocumentFlow())
         .runWith(LuceneSink(index))
 

@@ -7,7 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{FileIO, Flow, Framing}
 import akka.util.ByteString
 import at.bioinform.lucene.segment.Segment
-import at.bioinform.stream.fasta.FastaFlow
+import at.bioinform.stream.fasta.{FastaEntry, FastaFlow}
 import at.bioinform.stream.lucene.LuceneSink
 import at.bioinform.stream.util.Splitter
 import org.apache.lucene.document.{Document, Field, TextField}
@@ -35,8 +35,8 @@ object GenomeIndexer {
 
     val index = new MMapDirectory(outputFile)
 
-    val future = FastaFlow.from(fastaFile, Splitter.noop)
-      .via(Flow[Segment].map(_ => new Document()))
+    val future = FastaFlow.from(fastaFile)
+      .via(Flow[FastaEntry].map(_ => new Document()))
       .runWith(LuceneSink(index))
 
     future.onComplete {
