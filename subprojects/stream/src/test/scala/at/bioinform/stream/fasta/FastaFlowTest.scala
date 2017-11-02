@@ -4,9 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.TestKit
-import at.bioinform.lucene.segment.Segment
 import at.bioinform.lucene.{Desc, Id, Seq}
-import at.bioinform.stream.util.Splitter
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike}
 
 class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunSpecLike with BeforeAndAfterAll {
@@ -19,25 +17,25 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
 
   describe("A FastaFlow") {
     it("should parse an empty file.") {
-      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_empty.fa").toURI, Splitter.noop)
-        .runWith(TestSink.probe[Segment])
+      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_empty.fa").toURI)
+        .runWith(TestSink.probe[FastaEntry])
         .request(10)
         .expectComplete()
     }
 
     it("should parse a very standard FASTA file.") {
-      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_easy.fa").toURI, Splitter.noop)
-        .runWith(TestSink.probe[Segment])
+      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_easy.fa").toURI)
+        .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
-          Segment(
+          FastaEntry(
             Id("Test1"),
             Seq(
               """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
                 |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA
                 |TATAGGCATAGCGCACAGACAGATAAAAATTACAGAGTACACAACATCCATGAAACGCATTAGCACCACC
                 |ATTACCACCACCATCACCATTACCACAGGTAACGGTGCGGGCTGACGCGTACAGGAAACACAGAAAAAAG""".stripMargin.filter(_.isLetter))),
-          Segment(
+          FastaEntry(
             Id("Test2"),
             Seq(
               """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
@@ -48,16 +46,16 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
     }
 
     it("should parse a FASTA file with empty lines.") {
-      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_with_empty_lines.fa").toURI, Splitter.noop)
-        .runWith(TestSink.probe[Segment])
+      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_with_empty_lines.fa").toURI)
+        .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
-          Segment(
+          FastaEntry(
             Id("Test1"),
             Seq(
               """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
                 |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA""".stripMargin.filter(_.isLetter))),
-          Segment(
+          FastaEntry(
             Id("Test2"),
             Seq(
               """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
@@ -66,16 +64,16 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
     }
 
     it("should parse a FASTA file with comments.") {
-      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_with_comments.fa").toURI, Splitter.noop)
-        .runWith(TestSink.probe[Segment])
+      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_with_comments.fa").toURI)
+        .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
-          Segment(
+          FastaEntry(
             Id("Test1"),
             Seq(
               """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
                 |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA""".stripMargin.filter(_.isLetter))),
-          Segment(
+          FastaEntry(
             Id("Test2"),
             Seq(
               """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
@@ -84,23 +82,25 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
     }
 
     it("should parse a FASTA file containing sequence descriptions.") {
-      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_with_descriptions.fa").toURI, Splitter.noop)
-        .runWith(TestSink.probe[Segment])
+      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_with_descriptions.fa").toURI)
+        .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
-          Segment(
+          FastaEntry(
             Id("At1g02580"),
+            Some(Desc("mRNA (2291 bp) UTR's and CDS")),
             Seq(
               """aggcgagtggttaatggagaaggaaaaccatgaggacgatggtgagggtttgccacccgaactaaatcagataaaa
                 |gagcaaatcgaaaaggagagattctgcat""".stripMargin.filter(_.isLetter)),
-            Some(Desc("mRNA (2291 bp) UTR's and CDS"))),
-          Segment(
+          ),
+          FastaEntry(
             Id("At1g65300:"),
+            Some(Desc("mRNA 837bp")),
             Seq(
               """atgaagagaaagatgaagttatcgttaatagaaaacagtgtatcgaggaaaacaacattcaccaaaaggaagaaag
                 |ggatgacgaagaaactaaccgagctagtcactctatgtggtgttgaagcatgtgcggtcgtctatagtccgttcaa
                 |gaccggaccaagaagatggtggatcaagagacttttataagtcaaaggatcg""".stripMargin.filter(_.isLetter)),
-            Some(Desc("mRNA 837bp"))))
+          ))
         .expectComplete()
     }
   }

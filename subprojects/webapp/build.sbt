@@ -1,8 +1,10 @@
 name := "bIO-webapp"
 
-routesGenerator := InjectedRoutesGenerator
+libraryDependencies ++= Seq(
+  "com.typesafe.akka" %% "akka-http" % "10.0.10"
+)
 
-libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "6.6.0"
+libraryDependencies += "com.lihaoyi" %% "scalatags" % "0.6.7"
 
 /** Coverage analysis settings */
 coverageExcludedPackages := "<empty>;.*router.*;.*views.html.*;.*controllers.javascript.*"

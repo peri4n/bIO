@@ -18,7 +18,7 @@ trait Splitter extends (StringBuilder => (StringBuilder, Seq)) {
    * @param stringBuilder builder to test for splitting
    * @return if true `split` will actually do something
    */
-  def willSplit(stringBuilder: StringBuilder): Boolean = maxSize.exists(_ <= stringBuilder.size)
+  def willSplit(stringBuilder: StringBuilder): Boolean = maxSize.exists(_ < stringBuilder.size)
 
   /** Convenience alias */
   def split = apply _

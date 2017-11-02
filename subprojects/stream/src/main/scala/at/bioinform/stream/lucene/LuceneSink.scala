@@ -50,10 +50,10 @@ case class LuceneSink(directory: Directory) extends GraphStageWithMaterializedVa
         }
 
         override def onUpstreamFinish(): Unit = {
-          super.onUpstreamFinish()
           writer.commit()
           directory.close()
           promise.trySuccess(IOResult(sequenceCount, Try(Done)))
+          super.onUpstreamFinish()
         }
       })
     }
