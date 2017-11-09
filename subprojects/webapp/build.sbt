@@ -18,5 +18,7 @@ libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.196"
 )
 
+libraryDependencies += "org.typelevel" %% "cats-core" % "1.0.0-RC1"
+
 /** Coverage analysis settings */
 coverageExcludedPackages := "<empty>;.*router.*;.*views.html.*;.*controllers.javascript.*"

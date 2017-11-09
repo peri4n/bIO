@@ -14,6 +14,7 @@ import at.bioinform.webapp.directives.LuceneIndexResource
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
 import slick.jdbc.H2Profile.api._
+import slick.jdbc.JdbcBackend
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -24,13 +25,17 @@ object Application extends TableDefinitions with LuceneIndexResource {
   val Logger = LoggerFactory.getLogger(Application.getClass.getName)
 
   def main(args: Array[String]): Unit = {
+    Logger.info("Welcome to bIO - the search engine for biological sequences.")
 
-    Logger.debug("Reading configuration:")
     val conf = ConfigFactory.load()
-    val kmerSize = conf.getInt("bio.indexing.dna.kmer-size")
-    Logger.debug("Kmer size for DNA indexing is set to: {}", kmerSize)
-    val kmerOverlap = conf.getInt("bio.indexing.dna.kmer-overlap")
-    Logger.debug("Kmer overlap for DNA indexing is set to: {}", kmerOverlap)
+
+    val db = Database.forConfig("database.test").asInstanceOf[JdbcBackend.Database]
+    Logger.info("Database settings:")
+    Logger.info("- Database url: {}", conf.getString("database.test.url"))
+
+    Logger.info("Sequence indexing options:")
+    Logger.info("- Kmer size for DNA indexing is set to: {}", conf.getInt("bio.indexing.dna.kmer-size"))
+    Logger.info("- Kmer overlap for DNA indexing is set to: {}", conf.getInt("bio.indexing.dna.kmer-overlap"))
 
     implicit val system = ActorSystem("my-system")
     implicit val materializer = ActorMaterializer()
@@ -49,14 +54,14 @@ object Application extends TableDefinitions with LuceneIndexResource {
             extractDataBytes { data =>
               val source = data
                 .via(FastaFlow())
-                .via(FastaSegmenter(kmerSize, kmerOverlap))
+                .via(FastaSegmenter(conf.getInt("bio.indexing.dna.kmer-size"), conf.getInt("bio.indexing.dna.kmer-overlap")))
                 .via(Flow[Segment].map(seg => ByteString(seg.id.value)))
               complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, source))
             }
           }
-        } ~ luceneIndexRoutes
+        } ~ luceneIndexRoutes(db)
 
-    Await.result(createDbSchema(), Duration.Inf)
+    Await.result(createDbSchema(db), Duration.Inf)
 
     Logger.info(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
@@ -64,12 +69,14 @@ object Application extends TableDefinitions with LuceneIndexResource {
     StdIn.readLine() // let it run until user presses return
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
-      .onComplete(_ => system.terminate()) // and shutdown when done
+      .onComplete(_ => {
+      system.terminate()
+      db.close()
+    }) // and shutdown when done
   }
 
-  def createDbSchema(): Future[Unit] = {
+  def createDbSchema(db: JdbcBackend.Database): Future[Unit] = {
     Logger.info("Creating database schema")
-    val db = Database.forConfig("h2mem1")
     db.run(schema)
   }
 }
