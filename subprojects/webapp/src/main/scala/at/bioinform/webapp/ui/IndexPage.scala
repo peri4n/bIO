@@ -1,8 +1,8 @@
-package at.bioinform.webapp
+package at.bioinform.webapp.ui
 
 import scalatags.Text.all._
 
-object Index {
+object IndexPage {
 
   def apply() =
     html(
