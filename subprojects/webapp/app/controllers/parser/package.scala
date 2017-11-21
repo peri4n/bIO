@@ -22,5 +22,4 @@ package object parser {
     Accumulator(sink).map(Right.apply)
   }
 
-
 }

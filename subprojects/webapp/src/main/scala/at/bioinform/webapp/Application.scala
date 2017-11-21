@@ -39,9 +39,8 @@ object Application extends TableDefinitions with LuceneIndexRoute {
   def main(args: Array[String]): Unit = {
     Logger.info("Welcome to bIO - the search engine for biological sequences.")
 
-
     val db = DatabaseProvider.database("database.test").run(production)
-//    val db = Database.forConfig("database.test").asInstanceOf[JdbcBackend.Database]
+    //    val db = Database.forConfig("database.test").asInstanceOf[JdbcBackend.Database]
     printConfiguration().run(production)
 
     val conf = production.config
@@ -79,9 +78,9 @@ object Application extends TableDefinitions with LuceneIndexRoute {
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
       .onComplete(_ => {
-      system.terminate()
-      db.close()
-    }) // and shutdown when done
+        system.terminate()
+        db.close()
+      }) // and shutdown when done
   }
 
   def createDbSchema(db: JdbcBackend.Database): Future[Unit] = {

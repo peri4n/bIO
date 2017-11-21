@@ -20,14 +20,13 @@ trait LuceneIndexRoute extends TableDefinitions {
   def luceneIndexRoutes: Reader[Env, Route] =
     for {
       repo <- indexRepository
-    } yield
-      path("index") {
-        post {
-          complete {
-            val id = repo.create("first", Paths.get("path")).map(_.toString)
-            Marshal(id).to[HttpResponse]
-          }
+    } yield path("index") {
+      post {
+        complete {
+          val id = repo.create("first", Paths.get("path")).map(_.toString)
+          Marshal(id).to[HttpResponse]
         }
       }
+    }
 
 }

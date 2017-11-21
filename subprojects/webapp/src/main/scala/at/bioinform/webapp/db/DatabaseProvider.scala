@@ -9,8 +9,8 @@ object DatabaseProvider {
 
   val Database = new DatabaseFactoryDef {}
 
-  def database(dbName: String) : Reader[Env, JdbcBackend.Database] = Env.config map { config =>
-   Database.forConfig(dbName, config)
+  def database(dbName: String): Reader[Env, JdbcBackend.Database] = Env.config map { config =>
+    Database.forConfig(dbName, config)
   }
 
 }

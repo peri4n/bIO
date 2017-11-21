@@ -22,7 +22,7 @@ object IndexRepository {
 
   def create(name: String, path: Path) = indexRepository map { _.create(name, path) }
 
-  def get(index: Int) = indexRepository map { _.get(index)}
+  def get(index: Int) = indexRepository map { _.get(index) }
 
-  def update(index: LuceneIndex) = indexRepository map { _.update(index)}
+  def update(index: LuceneIndex) = indexRepository map { _.update(index) }
 }
