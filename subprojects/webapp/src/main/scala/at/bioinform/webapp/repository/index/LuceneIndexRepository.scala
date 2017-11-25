@@ -2,24 +2,28 @@ package at.bioinform.webapp.repository.index
 
 import java.nio.file.Path
 
-import at.bioinform.webapp.db.TableDefinitions
+import at.bioinform.webapp.db.{H2Database, TableDefinitions}
 import at.bioinform.webapp.model.LuceneIndex
-import slick.jdbc.JdbcBackend.DatabaseFactoryDef
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
-object LuceneIndexRepository extends IndexRepository with TableDefinitions {
+object LuceneIndexRepository extends IndexRepository with TableDefinitions with H2Database {
 
-  override def get(index: Int) = ???
+  import api._
 
   override def update(index: LuceneIndex) = ???
 
   override def create(name: String, path: Path): Future[LuceneIndex] = {
-    val Database = new DatabaseFactoryDef {}
-    val db = Database.forConfig("database.test")
     db.run(insertLuceneIndex += (0, name, path.toString)) map {
       (LuceneIndex.apply _).tupled
     }
   }
+
+  override def get(index: Int) = {
+    Await.result(db.run(luceneIndices.filter(_.id === index).result.head.map(LuceneIndex.tupled)), Duration.Inf)
+  }
+
+  override def findAll() = ???
 }

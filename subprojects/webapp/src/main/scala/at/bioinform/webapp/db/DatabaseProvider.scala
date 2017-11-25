@@ -13,4 +13,11 @@ object DatabaseProvider {
     Database.forConfig(dbName, config)
   }
 
+  def production(): Reader[Env, JdbcBackend.Database] = Env.config map { config =>
+    Database.forConfig("database.production", config)
+  }
+
+  def test(): Reader[Env, JdbcBackend.Database] = Env.config map { config =>
+    Database.forConfig("database.test", config)
+  }
 }

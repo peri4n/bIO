@@ -19,12 +19,14 @@ class IndexBenchmark {
 
   var sequence: String = _
 
-  val FieldType = new FieldType()
-  FieldType.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
-  FieldType.setStored(true)
-  FieldType.setStoreTermVectors(true)
-  FieldType.setTokenized(true)
-  FieldType.setStoreTermVectorOffsets(true)
+  val FieldType = {
+    val ft = new FieldType()
+    ft.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+    ft.setStored(true)
+    ft.setStoreTermVectors(true)
+    ft.setTokenized(true)
+    ft.setStoreTermVectorOffsets(true)
+  }
   var writer: IndexWriter = _
 
   @Setup

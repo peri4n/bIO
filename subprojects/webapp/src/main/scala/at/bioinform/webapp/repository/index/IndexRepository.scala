@@ -14,6 +14,8 @@ trait IndexRepository {
   def get(index: Int): LuceneIndex
 
   def update(index: LuceneIndex): LuceneIndex
+
+  def findAll(): Seq[LuceneIndex]
 }
 
 object IndexRepository {

@@ -18,6 +18,7 @@ trait TableDefinitions {
   }
 
   val luceneIndices = TableQuery[LuceneIndices]
+
   val insertLuceneIndex = luceneIndices returning luceneIndices.map(e => e.id) into ((index, id) => index.copy(_1 = id))
 
   val schema = DBIO.seq(
