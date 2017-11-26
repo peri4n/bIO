@@ -26,6 +26,7 @@ class IndexBenchmark {
     ft.setStoreTermVectors(true)
     ft.setTokenized(true)
     ft.setStoreTermVectorOffsets(true)
+    ft
   }
   var writer: IndexWriter = _
 

@@ -1,12 +1,13 @@
 package at.bioinform.webapp.db
 
-import slick.jdbc.H2Profile.api._
 
-trait H2Database {
+trait H2Database extends Database {
 
-  val api = slick.jdbc.H2Profile.api
+  val profile = slick.jdbc.H2Profile
 
-  val db = Database.forConfig("database.h2mem")
+  import slick.jdbc.H2Profile.api._
+
+  val db = Database.forConfig("database.test")
 
 }
 

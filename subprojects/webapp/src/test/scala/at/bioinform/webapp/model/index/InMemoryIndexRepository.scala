@@ -1,8 +1,6 @@
-package at.bioinform.webapp.repository.index
+package at.bioinform.webapp.model.index
 
 import java.nio.file.Path
-
-import at.bioinform.webapp.model.LuceneIndex
 
 object InMemoryIndexRepository extends IndexRepository {
 

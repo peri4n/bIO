@@ -1,15 +1,12 @@
-package at.bioinform.webapp.repository.index
+package at.bioinform.webapp.model.index
 
 import java.nio.file.Path
 
-import at.bioinform.webapp.model.LuceneIndex
-import at.bioinform.webapp.repository.Repositories
-
-import scala.concurrent.Future
+import at.bioinform.webapp.Repositories
 
 trait IndexRepository {
 
-  def create(name: String, path: Path): Future[LuceneIndex]
+  def create(name: String, path: Path): LuceneIndex
 
   def get(index: Int): LuceneIndex
 
