@@ -16,9 +16,9 @@ lazy val commonSettings = Seq(
 )
 
 /** Project dependencies */
-lazy val root = project.in(file("."))
-  .settings(commonSettings, coverageSettings)
+lazy val root = (project in file("."))
   .aggregate(lucene, stream, webapp)
+  .settings(commonSettings, coverageSettings)
   .enablePlugins(CodacyCoveragePlugin)
 
 lazy val lucene = (project in file("subprojects/lucene"))
