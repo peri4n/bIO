@@ -5,9 +5,16 @@ import java.net.URI
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Sink
-import at.bioinform.stream.fasta.FastaFlow
+import akka.stream.alpakka.elasticsearch.IncomingMessage
+import akka.stream.alpakka.elasticsearch.scaladsl.ElasticsearchSink
+import spray.json._
+import DefaultJsonProtocol._
+import at.bioinform.lucene.{Id, Seq}
+import at.bioinform.stream.fasta.{FastaEntry, FastaFlow}
+import org.apache.http.HttpHost
+import org.elasticsearch.client.RestClient
 import org.slf4j.LoggerFactory
+import spray.json.JsonFormat
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -18,6 +25,26 @@ object GenomeIndexer {
   implicit val system: ActorSystem = ActorSystem("GenomeIndexer")
 
   implicit val materializer: ActorMaterializer = ActorMaterializer()
+
+  implicit val client: RestClient = RestClient.builder(new HttpHost("localhost", 9200)).build()
+
+  implicit val format: JsonFormat[FastaEntry] = new JsonFormat[FastaEntry] {
+
+    override def read(json: JsValue): FastaEntry = {
+      val jsObject = json.asJsObject
+      jsObject.getFields("id", "desc", "sequence") match {
+        case scala.collection.Seq(id, _, sequence) ⇒ FastaEntry(
+          Id(id.convertTo[String]),
+          Seq(sequence.convertTo[String])
+        )
+      }
+    }
+
+    override def write(obj: FastaEntry): JsValue = JsObject(
+      "id" → obj.id.value.toJson,
+      "sequence" → obj.sequence.value.toJson
+    )
+  }
 
   def main(args: Array[String]): Unit = {
     val parser = new scopt.OptionParser[Config]("genomeIndexer") {
@@ -48,11 +75,17 @@ object GenomeIndexer {
     Logger.info("Starting to upload {} to {}", List(fastaFile, uri): _*)
 
     val future = FastaFlow.from(fastaFile.toPath)
-      .runWith(Sink.foreach(println))
+      .map(fastaEntry ⇒ IncomingMessage(Some(fastaEntry.id.value), fastaEntry))
+      .runWith(
+        ElasticsearchSink.create[FastaEntry](
+          indexName = "genome",
+          typeName = "sequence"))
 
     future.onComplete {
-      _ => system.terminate()
+      _ => {
+        client.close()
+        system.terminate()
+      }
     }
   }
-
 }
