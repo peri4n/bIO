@@ -7,14 +7,13 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.alpakka.elasticsearch.IncomingMessage
 import akka.stream.alpakka.elasticsearch.scaladsl.ElasticsearchSink
-import spray.json._
-import DefaultJsonProtocol._
 import at.bioinform.lucene.{Id, Seq}
 import at.bioinform.stream.fasta.{FastaEntry, FastaFlow}
 import org.apache.http.HttpHost
 import org.elasticsearch.client.RestClient
 import org.slf4j.LoggerFactory
-import spray.json.JsonFormat
+import spray.json.DefaultJsonProtocol._
+import spray.json.{JsonFormat, _}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -77,14 +76,13 @@ object GenomeIndexer {
       .runWith(
         ElasticsearchSink.create[FastaEntry](
           indexName = "genome",
-          typeName  = "sequence"))
+          typeName = "sequence"))
 
     future.onComplete {
-      _ =>
-        {
-          client.close()
-          system.terminate()
-        }
+      _ => {
+        client.close()
+        system.terminate()
+      }
     }
   }
 }
