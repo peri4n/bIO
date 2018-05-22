@@ -4,13 +4,10 @@ import java.io.File
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{FileIO, Flow, Framing}
-import akka.util.ByteString
-import at.bioinform.lucene.segment.Segment
+import akka.stream.scaladsl.Flow
 import at.bioinform.stream.fasta.{FastaEntry, FastaFlow}
 import at.bioinform.stream.lucene.LuceneSink
-import at.bioinform.stream.util.Splitter
-import org.apache.lucene.document.{Document, Field, TextField}
+import org.apache.lucene.document.Document
 import org.apache.lucene.store.MMapDirectory
 import org.slf4j.LoggerFactory
 

@@ -25,9 +25,9 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
 
-    private var sequenceBuilder = new mutable.StringBuilder(1000)
+    private[this] var sequenceBuilder = new mutable.StringBuilder(1000)
 
-    private var currentHeader: Option[Header] = None
+    private[this] var currentHeader: Option[Header] = None
 
     setHandler(in, new InHandler {
 

@@ -24,12 +24,12 @@ lazy val root = project.in(file("."))
 lazy val lucene = (project in file("subprojects/lucene"))
   .settings(commonSettings, coverageSettings)
 
-lazy val tools = (project in file("tools"))
-  .dependsOn(stream)
-  .settings(commonSettings)
-
 lazy val stream = (project in file("subprojects/stream"))
   .dependsOn(lucene)
+  .settings(commonSettings, coverageSettings)
+
+lazy val webapp = (project in file("subprojects/webapp"))
+  .dependsOn(stream)
   .settings(commonSettings, coverageSettings)
 
 lazy val bench = (project in file("benchmarks"))
@@ -37,10 +37,9 @@ lazy val bench = (project in file("benchmarks"))
   .settings(commonSettings)
   .enablePlugins(JmhPlugin)
 
-lazy val webapp = (project in file("subprojects/webapp"))
+lazy val tools = (project in file("tools"))
   .dependsOn(stream)
-  .settings(commonSettings, coverageSettings)
-
+  .settings(commonSettings)
 
 /** Scalariform settings */
 scalariformSettings(true)

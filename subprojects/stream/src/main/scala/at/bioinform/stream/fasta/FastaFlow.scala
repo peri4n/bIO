@@ -6,8 +6,6 @@ import java.nio.file.{Path, Paths}
 import akka.stream.IOResult
 import akka.stream.scaladsl.{FileIO, Flow, Framing, Source}
 import akka.util.ByteString
-import at.bioinform.lucene.segment.Segment
-import at.bioinform.stream.util.Splitter
 
 import scala.concurrent.Future
 

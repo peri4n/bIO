@@ -2,8 +2,8 @@ package at.bioinform.webapp.db
 
 trait TableDefinitions {
 
-  import slick.lifted.Tag
   import slick.jdbc.H2Profile.api._
+  import slick.lifted.Tag
 
   case class LuceneIndices(tag: Tag) extends Table[(Int, String, String)](tag, "LUCENE_INDICES") {
 
