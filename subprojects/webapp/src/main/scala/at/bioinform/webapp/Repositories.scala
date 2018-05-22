@@ -1,7 +1,6 @@
-package at.bioinform.webapp.repository
+package at.bioinform.webapp
 
-import at.bioinform.webapp.repository.index.IndexRepository
-import at.bioinform.webapp.Env
+import at.bioinform.webapp.model.index.IndexRepository
 
 trait Repositories {
 

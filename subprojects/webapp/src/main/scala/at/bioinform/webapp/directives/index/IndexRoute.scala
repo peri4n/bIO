@@ -1,4 +1,4 @@
-package at.bioinform.webapp.directives.lucene
+package at.bioinform.webapp.directives.index
 
 import java.nio.file.Paths
 
@@ -13,20 +13,17 @@ import cats.data.Reader
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait LuceneIndexRoute extends TableDefinitions {
+object IndexRoute extends TableDefinitions {
 
-  import at.bioinform.webapp.repository.Repositories.indexRepository
-
-  def luceneIndexRoutes: Reader[Env, Route] =
-    for {
-      repo <- indexRepository
-    } yield path("index") {
+  def index: Reader[Env, Route] = Reader { env =>
+    path("index") {
       post {
         complete {
-          val id = repo.create("first", Paths.get("path")).map(_.toString)
+          val id = env.repositories.indexRepository.create("first", Paths.get("path")).id.toString
           Marshal(id).to[HttpResponse]
         }
       }
     }
+  }
 
 }
