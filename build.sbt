@@ -1,19 +1,19 @@
 name := "bIO"
 
 lazy val commonSettings = Seq(
-  organization := "at.bioinform",
-  version := "1.1.5",
-  scalaVersion := "2.12.2",
-  isSnapshot := true,
-  resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/",
-  scalacOptions ++= Seq(
-    // See other posts in the series for other helpful options
-    "-feature",
-    "-language:existentials",
-    "-language:higherKinds",
-    "-language:implicitConversions"
-  )
-)
+                               organization := "at.bioinform",
+                               version := "1.1.5",
+                               scalaVersion := "2.12.2",
+                               isSnapshot := true,
+                               resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/",
+                               scalacOptions ++= Seq(
+                                                      // See other posts in the series for other helpful options
+                                                      "-feature",
+                                                      "-language:existentials",
+                                                      "-language:higherKinds",
+                                                      "-language:implicitConversions"
+                                                    )
+                             )
 
 /** Project dependencies */
 lazy val root = project.in(file("."))
@@ -41,22 +41,6 @@ lazy val tools = (project in file("tools"))
   .dependsOn(stream)
   .settings(commonSettings)
 
-/** Scalariform settings */
-scalariformSettings(true)
-
-com.typesafe.sbt.SbtScalariform.ScalariformKeys.preferences := {
-  import scalariform.formatter.preferences._
-  FormattingPreferences()
-    .setPreference(AlignArguments, true)
-    .setPreference(AlignSingleLineCaseStatements, true)
-    .setPreference(AlignSingleLineCaseStatements.MaxArrowIndent, 20)
-    .setPreference(DanglingCloseParenthesis, Prevent)
-    .setPreference(CompactControlReadability, false)
-    .setPreference(SpacesAroundMultiImports, false)
-}
-
 /** Coverage analysis settings */
-lazy val coverageSettings = Seq(
-  coverageHighlighting := true
-)
+lazy val coverageSettings = Seq(coverageHighlighting := true)
 

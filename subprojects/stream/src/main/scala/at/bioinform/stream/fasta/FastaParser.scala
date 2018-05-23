@@ -11,17 +11,15 @@ import scala.collection.mutable
 import scala.util.{Failure, Success, Try}
 
 /**
- * Flow that parses an incoming byte stream representing FASTA-formatted sequence data.
- *
- * Note: This flow expects it's income in chunks of lines!!!
- */
+  * Flow that parses an incoming byte stream representing FASTA-formatted sequence data.
+  *
+  * Note: This flow expects it's income in chunks of lines!!!
+  */
 private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
   type Header = (Id, Option[Desc])
   val in: Inlet[ByteString] = Inlet[ByteString]("input")
   val out: Outlet[FastaEntry] = Outlet[FastaEntry]("output")
-
-  override def shape: FlowShape[ByteString, FastaEntry] = FlowShape(in, out)
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
 
@@ -62,6 +60,8 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
     })
 
   }
+
+  override def shape: FlowShape[ByteString, FastaEntry] = FlowShape(in, out)
 
   def parseHeader(chunk: String): Try[Header] =
     if (!chunk.startsWith(">")) {

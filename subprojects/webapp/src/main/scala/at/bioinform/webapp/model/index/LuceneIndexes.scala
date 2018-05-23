@@ -19,7 +19,9 @@ object LuceneIndexes extends IndexRepository with TableDefinitions with H2Databa
   }
 
   override def get(index: Int) = {
-    Await.result(db.run(luceneIndices.filter(_.id === index).result.head).map { (LuceneIndex.fromPath _).tupled }, Duration.Inf)
+    Await.result(db.run(luceneIndices.filter(_.id === index).result.head).map {
+      (LuceneIndex.fromPath _).tupled
+    }, Duration.Inf)
   }
 
   override def findAll() = ???

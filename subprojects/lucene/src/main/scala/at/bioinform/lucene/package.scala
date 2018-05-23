@@ -40,4 +40,5 @@ package object lucene {
   implicit object Seq {
     def seq2String(seq: Seq): String = seq.value
   }
+
 }

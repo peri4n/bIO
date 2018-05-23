@@ -14,11 +14,6 @@ import scala.util.Random
 @State(Scope.Thread)
 class IndexBenchmark {
 
-  @Param(Array("100", "1000", "10000", "100000", "1000000"))
-  var SequenceSize: Int = _
-
-  var sequence: String = _
-
   val FieldType = {
     val ft = new FieldType()
     ft.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
@@ -28,6 +23,9 @@ class IndexBenchmark {
     ft.setStoreTermVectorOffsets(true)
     ft
   }
+  @Param(Array("100", "1000", "10000", "100000", "1000000"))
+  var SequenceSize: Int = _
+  var sequence: String = _
   var writer: IndexWriter = _
 
   @Setup

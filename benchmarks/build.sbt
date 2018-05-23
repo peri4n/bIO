@@ -9,14 +9,14 @@ downloadHumanGenome := {
   if (java.nio.file.Files.notExists(destination)) {
     println("Downloading human genome ...")
     sbt.io.IO.gunzip(
-      new URL("http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz").openStream(),
-      Files.newOutputStream(destination)
-    )
+                      new URL("http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz").openStream(),
+                      Files.newOutputStream(destination)
+                    )
   } else {
     println("Genome already downloaded.")
   }
 }
 
-run in Jmh := { (run in Jmh).dependsOn(downloadHumanGenome) }
+run in Jmh := {(run in Jmh).dependsOn(downloadHumanGenome)}
 
 libraryDependencies += "commons-io" % "commons-io" % "2.5" % Compile

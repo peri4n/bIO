@@ -1,7 +1,7 @@
 package at.bioinform.stream.util
 
-import org.scalatest.{FunSpec, Matchers}
 import at.bioinform.lucene._
+import org.scalatest.{FunSpec, Matchers}
 
 class SplitterTest extends FunSpec with Matchers {
 

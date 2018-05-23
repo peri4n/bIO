@@ -3,21 +3,21 @@ package at.bioinform.stream.util
 import at.bioinform.lucene._
 
 /**
- * A Splitter splits strings into chunks of a specified size with a given overlap.
- *
- * Note, that for performance reasons we do not split strings but StringBuilders.
- */
+  * A Splitter splits strings into chunks of a specified size with a given overlap.
+  *
+  * Note, that for performance reasons we do not split strings but StringBuilders.
+  */
 trait Splitter extends (StringBuilder => (StringBuilder, Seq)) {
 
   /** Maximal size of a stringbuilder before he gets split. */
   def maxSize: Option[Int]
 
   /**
-   * Predicate if a splitter will split the string when applied to the split function.
-   *
-   * @param stringBuilder builder to test for splitting
-   * @return if true `split` will actually do something
-   */
+    * Predicate if a splitter will split the string when applied to the split function.
+    *
+    * @param stringBuilder builder to test for splitting
+    * @return if true `split` will actually do something
+    */
   def willSplit(stringBuilder: StringBuilder): Boolean = maxSize.exists(_ < stringBuilder.size)
 
   /** Convenience alias */

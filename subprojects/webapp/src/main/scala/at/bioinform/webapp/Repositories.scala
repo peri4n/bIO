@@ -12,6 +12,8 @@ object Repositories {
 
   import Env.repositories
 
-  val indexRepository = repositories map { _.indexRepository }
+  val indexRepository = repositories map {
+    _.indexRepository
+  }
 
 }

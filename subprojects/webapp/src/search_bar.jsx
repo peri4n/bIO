@@ -16,11 +16,11 @@ export default class SearchBar extends React.Component {
 
     handleSubmit(event) {
         const oReq = new XMLHttpRequest();
-        oReq.open("GET", "http://localhost:9000/index/search?sequence=" + this.state.value, true);
+        oReq.open('GET', 'http://localhost:9000/index/search?sequence=' + this.state.value, true);
         oReq.setRequestHeader('Content-Type', 'text/plain');
 
         oReq.onload = () => {
-            document.getElementById("result").innerHTML = oReq.responseText
+            document.getElementById('result').innerHTML = oReq.responseText
         };
 
         oReq.send();

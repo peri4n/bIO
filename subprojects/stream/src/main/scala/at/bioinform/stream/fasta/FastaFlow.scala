@@ -18,39 +18,39 @@ object FastaFlow {
   val FastaCommentStart = ByteString("#")
 
   /**
-   * Utility method to easily create a processor from a given URI.
-   *
-   * @param uri URI to a FASTA formatted file.
-   * @return a flow providing [[FastaEntry]]s
-   */
+    * Utility method to easily create a processor from a given URI.
+    *
+    * @param uri URI to a FASTA formatted file.
+    * @return a flow providing [[FastaEntry]]s
+    */
   def from(uri: URI): Source[FastaEntry, Future[IOResult]] = from(Paths.get(uri))
 
   /**
-   * Utility method to easily create a processor from a given path.
-   *
-   * @param path path to a FASTA formatted file.
-   * @return a flow providing [[FastaEntry]]s
-   */
+    * Utility method to easily create a processor from a given path.
+    *
+    * @param path path to a FASTA formatted file.
+    * @return a flow providing [[FastaEntry]]s
+    */
   def from(path: Path): Source[FastaEntry, Future[IOResult]] = {
     FileIO.fromPath(path).via(FastaFlow())
   }
 
   /**
-   * A flow that parses [[akka.util.ByteString]] into [[at.bioinform.stream.fasta.FastaEntry]]
-   *
-   * The materialized value is the number of indexed sequences.
-   */
+    * A flow that parses [[akka.util.ByteString]] into [[at.bioinform.stream.fasta.FastaEntry]]
+    *
+    * The materialized value is the number of indexed sequences.
+    */
   def apply() = Framing.delimiter(ByteString(System.lineSeparator()), MaxLineSize)
     .via(Flow[ByteString].filter(ignoreLine))
     .via(FastaParser)
     .named("FastaFlow")
 
   /**
-   * Filter for lines that are ignored in the FASTA format.
-   *
-   * @param line the line to be checked
-   * @return true if the line is empty or starts with a '#'
-   */
+    * Filter for lines that are ignored in the FASTA format.
+    *
+    * @param line the line to be checked
+    * @return true if the line is empty or starts with a '#'
+    */
   private def ignoreLine(line: ByteString): Boolean = {
     !(line.isEmpty || line.startsWith(FastaCommentStart))
   }

@@ -60,8 +60,8 @@ object Application extends TableDefinitions {
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
       .onComplete(_ => {
-        system.terminate()
-      }) // and shutdown when done
+      system.terminate()
+    }) // and shutdown when done
   }
 
   def createDbSchema(schema: DBIOAction[Unit, NoStream, Effect.Schema]): Reader[Env, Unit] = Reader { env =>
@@ -87,4 +87,5 @@ object Application extends TableDefinitions {
       override def indexRepository = LuceneIndexes
     }
   }
+
 }

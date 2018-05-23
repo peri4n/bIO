@@ -22,8 +22,8 @@ import scala.collection.mutable
 import scala.util.Random
 
 /**
- * - Search sequences of different lengths
- */
+  * - Search sequences of different lengths
+  */
 @Fork(1)
 @State(Scope.Thread)
 class SearchBenchmark {
@@ -76,6 +76,17 @@ class SearchBenchmark {
     Files.createTempDirectory(outputDir, "search-benchmark")
   }
 
+  private def analyzer(): Analyzer = {
+    new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(),
+                                mutable.Map[String, Analyzer]("sequence" ->
+                                                                CustomAnalyzer.builder()
+                                                                  .withTokenizer(classOf[NGramTokenizerFactory],
+                                                                                 mutable.Map("minGramSize" -> "8",
+                                                                                             "maxGramSize" -> "8")
+                                                                                   .asJava)
+                                                                  .build()).asJava)
+  }
+
   @TearDown
   def tearDown(): Unit = {
     writer.commit()
@@ -117,19 +128,5 @@ class SearchBenchmark {
         next = tokenStream.incrementToken()
       }
     }
-  }
-
-  private def analyzer(): Analyzer = {
-    new PerFieldAnalyzerWrapper(
-      new WhitespaceAnalyzer(),
-      mutable.Map[String, Analyzer]("sequence" ->
-        CustomAnalyzer.builder()
-        .withTokenizer(
-          classOf[NGramTokenizerFactory],
-          mutable.Map(
-            "minGramSize" -> "8",
-            "maxGramSize" -> "8")
-            .asJava)
-        .build()).asJava)
   }
 }

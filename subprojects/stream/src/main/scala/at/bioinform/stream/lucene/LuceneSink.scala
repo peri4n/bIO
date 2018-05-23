@@ -9,22 +9,19 @@ import org.apache.lucene.document.Document
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.store.Directory
 
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.{Future, Promise}
 import scala.util.Try
 
 /**
- * A sink that stores all incoming [[Segment]] inside a Lucene [[Directory]].
- *
- * The provided directory is closed after the stream is run.
- *
- * @param directory Lucene index where the segments should be stored.
- */
+  * A sink that stores all incoming [[Segment]] inside a Lucene [[Directory]].
+  *
+  * The provided directory is closed after the stream is run.
+  *
+  * @param directory Lucene index where the segments should be stored.
+  */
 case class LuceneSink(directory: Directory) extends GraphStageWithMaterializedValue[SinkShape[Document], Future[IOResult]] {
 
   val in: Inlet[Document] = Inlet("input")
-
-  override def shape = SinkShape(in)
 
   override def createLogicAndMaterializedValue(inheritedAttributes: Attributes): (GraphStageLogic, Future[IOResult]) = {
 
@@ -59,4 +56,6 @@ case class LuceneSink(directory: Directory) extends GraphStageWithMaterializedVa
     }
     (logic, promise.future)
   }
+
+  override def shape = SinkShape(in)
 }

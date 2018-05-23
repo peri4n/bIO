@@ -9,4 +9,4 @@ render(
         <SearchBar/>
         <p/>
         <FileUpload/>
-    </div>), document.getElementById("app"));
+    </div>), document.getElementById('app'));

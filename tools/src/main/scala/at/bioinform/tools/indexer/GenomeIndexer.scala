@@ -32,15 +32,15 @@ object GenomeIndexer {
     override def read(json: JsValue): FastaEntry = {
       val jsObject = json.asJsObject
       jsObject.getFields("id", "desc", "sequence") match {
-        case scala.collection.Seq(id, _, sequence) => FastaEntry(
-          Id(id.convertTo[String]),
-          Seq(sequence.convertTo[String]))
+        case scala.collection.Seq(id, _, sequence) => {
+          FastaEntry(Id(id.convertTo[String]),
+                     Seq(sequence.convertTo[String]))
+        }
       }
     }
 
-    override def write(obj: FastaEntry): JsValue = JsObject(
-      "id" -> obj.id.value.toJson,
-      "sequence" -> obj.sequence.value.toJson)
+    override def write(obj: FastaEntry): JsValue = JsObject("id" -> obj.id.value.toJson,
+                                                            "sequence" -> obj.sequence.value.toJson)
   }
 
   def main(args: Array[String]): Unit = {
@@ -61,10 +61,8 @@ object GenomeIndexer {
 
     // parser.parse returns Option[C]
     parser.parse(args, Config()) match {
-      case Some(config) =>
-        uploadFastaFileTo(config.fastaFile, config.clusterUrl)
-      case None =>
-        system.terminate()
+      case Some(config) => uploadFastaFileTo(config.fastaFile, config.clusterUrl)
+      case None         => system.terminate()
     }
   }
 
@@ -73,10 +71,8 @@ object GenomeIndexer {
 
     val future = FastaFlow.from(fastaFile.toPath)
       .map(fastaEntry ⇒ IncomingMessage(Some(fastaEntry.id.value), fastaEntry))
-      .runWith(
-        ElasticsearchSink.create[FastaEntry](
-          indexName = "genome",
-          typeName = "sequence"))
+      .runWith(ElasticsearchSink.create[FastaEntry](indexName = "genome",
+                                                    typeName = "sequence"))
 
     future.onComplete {
       _ => {
