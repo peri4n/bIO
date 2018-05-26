@@ -1,19 +1,24 @@
 name := "bIO"
 
 lazy val commonSettings = Seq(
-                               organization := "at.bioinform",
-                               version := "1.1.5",
-                               scalaVersion := "2.12.2",
-                               isSnapshot := true,
-                               resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/",
-                               scalacOptions ++= Seq(
-                                                      // See other posts in the series for other helpful options
-                                                      "-feature",
-                                                      "-language:existentials",
-                                                      "-language:higherKinds",
-                                                      "-language:implicitConversions"
-                                                    )
-                             )
+  organization := "at.bioinform",
+  version := "1.1.5",
+  scalaVersion := "2.12.2",
+  isSnapshot := true,
+  resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/",
+  scalacOptions ++= Seq(
+    "-feature",
+    "-language:existentials",
+    "-language:higherKinds",
+    "-language:implicitConversions",
+    "-Xfatal-warnings",
+    "-deprecation",
+    "-Xlint:missing-interpolator",
+    "-Ywarn-unused-import",
+    "-Ywarn-unused",
+    "-Ywarn-dead-code"
+  )
+)
 
 /** Project dependencies */
 lazy val root = project.in(file("."))

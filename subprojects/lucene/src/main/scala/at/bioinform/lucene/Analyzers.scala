@@ -13,13 +13,13 @@ object Analyzers {
 
   def ngram(minNGramSize: Int, maxNGramSize: Int) = {
     val nGramTokenizerParameter = mutable.Map("minGramSize" -> minNGramSize.toString,
-                                              "maxGramSize" -> maxNGramSize.toString).asJava
+      "maxGramSize" -> maxNGramSize.toString).asJava
 
     val sequenceAnalyzer = CustomAnalyzer.builder()
       .withTokenizer(classOf[NGramTokenizerFactory], nGramTokenizerParameter)
       .build()
 
     new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(),
-                                mutable.Map[String, Analyzer]("sequence" -> sequenceAnalyzer).asJava)
+      mutable.Map[String, Analyzer]("sequence" -> sequenceAnalyzer).asJava)
   }
 }

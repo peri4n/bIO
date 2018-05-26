@@ -28,20 +28,20 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
         .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
-                     FastaEntry(
-                                 Id("Test1"),
-                                 Seq(
-                                      """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
-                                        |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA
-                                        |TATAGGCATAGCGCACAGACAGATAAAAATTACAGAGTACACAACATCCATGAAACGCATTAGCACCACC
-                                        |ATTACCACCACCATCACCATTACCACAGGTAACGGTGCGGGCTGACGCGTACAGGAAACACAGAAAAAAG""".stripMargin.filter(_.isLetter))),
-                     FastaEntry(
-                                 Id("Test2"),
-                                 Seq(
-                                      """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
-                                        |GTTCGGCGGTACATCAGTGGCAAATGCAGAACGTTTTCTGCGTGTTGCCGATATTCTGGAAAGCAATGCC
-                                        |AGGCAGGGGCAGGTGGCCACCGTCCTCTCTGCCCCCGCCAAAATCACCAACCACCTGGTGGCGATGATTG
-                                        |AAAAAACCATTAGCGGCCAGGATGCTTTACCCAATATCAGCGATGCCGAACGTATTTTTGCCGAACTTTT""".stripMargin.filter(_.isLetter))))
+          FastaEntry(
+            Id("Test1"),
+            Seq(
+              """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
+                |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA
+                |TATAGGCATAGCGCACAGACAGATAAAAATTACAGAGTACACAACATCCATGAAACGCATTAGCACCACC
+                |ATTACCACCACCATCACCATTACCACAGGTAACGGTGCGGGCTGACGCGTACAGGAAACACAGAAAAAAG""".stripMargin.filter(_.isLetter))),
+          FastaEntry(
+            Id("Test2"),
+            Seq(
+              """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
+                |GTTCGGCGGTACATCAGTGGCAAATGCAGAACGTTTTCTGCGTGTTGCCGATATTCTGGAAAGCAATGCC
+                |AGGCAGGGGCAGGTGGCCACCGTCCTCTCTGCCCCCGCCAAAATCACCAACCACCTGGTGGCGATGATTG
+                |AAAAAACCATTAGCGGCCAGGATGCTTTACCCAATATCAGCGATGCCGAACGTATTTTTGCCGAACTTTT""".stripMargin.filter(_.isLetter))))
         .expectComplete()
     }
 
@@ -50,16 +50,16 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
         .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
-                     FastaEntry(
-                                 Id("Test1"),
-                                 Seq(
-                                      """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
-                                        |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA""".stripMargin.filter(_.isLetter))),
-                     FastaEntry(
-                                 Id("Test2"),
-                                 Seq(
-                                      """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
-                                        |GTTCGGCGGTACATCAGTGGCAAATGCAGAACGTTTTCTGCGTGTTGCCGATATTCTGGAAAGCAATGCC""".stripMargin.filter(_.isLetter))))
+          FastaEntry(
+            Id("Test1"),
+            Seq(
+              """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
+                |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA""".stripMargin.filter(_.isLetter))),
+          FastaEntry(
+            Id("Test2"),
+            Seq(
+              """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
+                |GTTCGGCGGTACATCAGTGGCAAATGCAGAACGTTTTCTGCGTGTTGCCGATATTCTGGAAAGCAATGCC""".stripMargin.filter(_.isLetter))))
         .expectComplete()
     }
 
@@ -68,16 +68,16 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
         .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
-                     FastaEntry(
-                                 Id("Test1"),
-                                 Seq(
-                                      """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
-                                        |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA""".stripMargin.filter(_.isLetter))),
-                     FastaEntry(
-                                 Id("Test2"),
-                                 Seq(
-                                      """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
-                                        |GTTCGGCGGTACATCAGTGGCAAATGCAGAACGTTTTCTGCGTGTTGCCGATATTCTGGAAAGCAATGCC""".stripMargin.filter(_.isLetter))))
+          FastaEntry(
+            Id("Test1"),
+            Seq(
+              """AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
+                |TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA""".stripMargin.filter(_.isLetter))),
+          FastaEntry(
+            Id("Test2"),
+            Seq(
+              """CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
+                |GTTCGGCGGTACATCAGTGGCAAATGCAGAACGTTTTCTGCGTGTTGCCGATATTCTGGAAAGCAATGCC""".stripMargin.filter(_.isLetter))))
         .expectComplete()
     }
 
@@ -86,21 +86,21 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
         .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
-                     FastaEntry(
-                                 Id("At1g02580"),
-                                 Some(Desc("mRNA (2291 bp) UTR's and CDS")),
-                                 Seq(
-                                      """aggcgagtggttaatggagaaggaaaaccatgaggacgatggtgagggtttgccacccgaactaaatcagataaaa
-                                        |gagcaaatcgaaaaggagagattctgcat""".stripMargin.filter(_.isLetter)),
-                                 ),
-                     FastaEntry(
-                                 Id("At1g65300:"),
-                                 Some(Desc("mRNA 837bp")),
-                                 Seq(
-                                      """atgaagagaaagatgaagttatcgttaatagaaaacagtgtatcgaggaaaacaacattcaccaaaaggaagaaag
-                                        |ggatgacgaagaaactaaccgagctagtcactctatgtggtgttgaagcatgtgcggtcgtctatagtccgttcaa
-                                        |gaccggaccaagaagatggtggatcaagagacttttataagtcaaaggatcg""".stripMargin.filter(_.isLetter)),
-                                 ))
+          FastaEntry(
+            Id("At1g02580"),
+            Some(Desc("mRNA (2291 bp) UTR's and CDS")),
+            Seq(
+              """aggcgagtggttaatggagaaggaaaaccatgaggacgatggtgagggtttgccacccgaactaaatcagataaaa
+                |gagcaaatcgaaaaggagagattctgcat""".stripMargin.filter(_.isLetter)),
+          ),
+          FastaEntry(
+            Id("At1g65300:"),
+            Some(Desc("mRNA 837bp")),
+            Seq(
+              """atgaagagaaagatgaagttatcgttaatagaaaacagtgtatcgaggaaaacaacattcaccaaaaggaagaaag
+                |ggatgacgaagaaactaaccgagctagtcactctatgtggtgttgaagcatgtgcggtcgtctatagtccgttcaa
+                |gaccggaccaagaagatggtggatcaagagacttttataagtcaaaggatcg""".stripMargin.filter(_.isLetter)),
+          ))
         .expectComplete()
     }
   }

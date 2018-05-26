@@ -68,25 +68,6 @@ class SearchBenchmark {
     writer.commit()
   }
 
-  private def createTempDir(): Path = {
-    val outputDir = Paths.get("target/test")
-    if (!Files.exists(outputDir)) {
-      Files.createDirectory(outputDir)
-    }
-    Files.createTempDirectory(outputDir, "search-benchmark")
-  }
-
-  private def analyzer(): Analyzer = {
-    new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(),
-                                mutable.Map[String, Analyzer]("sequence" ->
-                                                                CustomAnalyzer.builder()
-                                                                  .withTokenizer(classOf[NGramTokenizerFactory],
-                                                                                 mutable.Map("minGramSize" -> "8",
-                                                                                             "maxGramSize" -> "8")
-                                                                                   .asJava)
-                                                                  .build()).asJava)
-  }
-
   @TearDown
   def tearDown(): Unit = {
     writer.commit()
@@ -128,5 +109,24 @@ class SearchBenchmark {
         next = tokenStream.incrementToken()
       }
     }
+  }
+
+  private def createTempDir(): Path = {
+    val outputDir = Paths.get("target/test")
+    if (!Files.exists(outputDir)) {
+      Files.createDirectory(outputDir)
+    }
+    Files.createTempDirectory(outputDir, "search-benchmark")
+  }
+
+  private def analyzer(): Analyzer = {
+    new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(),
+      mutable.Map[String, Analyzer]("sequence" ->
+        CustomAnalyzer.builder()
+          .withTokenizer(classOf[NGramTokenizerFactory],
+            mutable.Map("minGramSize" -> "8",
+              "maxGramSize" -> "8")
+              .asJava)
+          .build()).asJava)
   }
 }

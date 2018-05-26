@@ -4,7 +4,6 @@ import akka.Done
 import akka.stream.stage.{GraphStageLogic, GraphStageWithMaterializedValue, InHandler}
 import akka.stream.{Attributes, IOResult, Inlet, SinkShape}
 import at.bioinform.lucene.Analyzers
-import at.bioinform.lucene.segment.Segment
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.{IndexWriter, IndexWriterConfig}
 import org.apache.lucene.store.Directory
@@ -13,7 +12,7 @@ import scala.concurrent.{Future, Promise}
 import scala.util.Try
 
 /**
-  * A sink that stores all incoming [[Segment]] inside a Lucene [[Directory]].
+  * A sink that stores all incoming [[at.bioinform.lucene.segment.Segment]] inside a Lucene [[Directory]].
   *
   * The provided directory is closed after the stream is run.
   *
