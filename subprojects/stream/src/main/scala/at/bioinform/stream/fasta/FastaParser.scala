@@ -18,8 +18,12 @@ import scala.util.{Failure, Success, Try}
 private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
   type Header = (Id, Option[Desc])
+
   val in: Inlet[ByteString] = Inlet[ByteString]("input")
+
   val out: Outlet[FastaEntry] = Outlet[FastaEntry]("output")
+
+  private val FastaHeaderStart = ">"
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
 
@@ -64,13 +68,13 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
   override def shape: FlowShape[ByteString, FastaEntry] = FlowShape(in, out)
 
   def parseHeader(chunk: String): Try[Header] =
-    if (!chunk.startsWith(">")) {
-      Failure(new RuntimeException(s"Expected a '>' at the start of a fasta entry but read: '${chunk.head}'"))
+    if (!chunk.startsWith(FastaHeaderStart)) {
+      Failure(new RuntimeException(s"Expected a '$FastaHeaderStart' at the start of a fasta entry but read: '${chunk.head}'"))
     } else {
       val (id, description) = chunk.tail.span(_ != ' ')
       val maybeDescription = if (description.isEmpty) None else Some(Desc(description.trim()))
       Success((Id(id), maybeDescription))
     }
 
-  private def isHeaderLine(line: String): Boolean = line.startsWith(">")
+  private[this] def isHeaderLine(line: String): Boolean = line.startsWith(FastaHeaderStart)
 }
