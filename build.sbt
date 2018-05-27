@@ -11,6 +11,7 @@ lazy val commonSettings = Seq(
     "-language:existentials",
     "-language:higherKinds",
     "-language:implicitConversions",
+    "-Ypartial-unification",
     "-Xfatal-warnings",
     "-deprecation",
     "-Xlint:missing-interpolator",

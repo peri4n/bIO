@@ -8,14 +8,13 @@ import org.apache.lucene.analysis.core.WhitespaceAnalyzer
 import org.apache.lucene.analysis.custom.CustomAnalyzer
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper
 import org.apache.lucene.analysis.ngram.NGramTokenizerFactory
-import org.apache.lucene.analysis.tokenattributes.{CharTermAttribute, OffsetAttribute}
+import org.apache.lucene.analysis.tokenattributes.OffsetAttribute
 import org.apache.lucene.document.{Document, Field, TextField}
 import org.apache.lucene.index._
 import org.apache.lucene.search.highlight._
 import org.apache.lucene.search.{IndexSearcher, TermQuery}
 import org.apache.lucene.store.{Directory, MMapDirectory}
 import org.openjdk.jmh.annotations._
-import org.openjdk.jmh.infra.Blackhole
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -68,49 +67,6 @@ class SearchBenchmark {
     writer.commit()
   }
 
-  @TearDown
-  def tearDown(): Unit = {
-    writer.commit()
-    writer.close()
-    directory.close()
-    FileUtils.forceDelete(tempDir.toFile)
-  }
-
-  @Benchmark
-  def searchDna(blackhole: Blackhole): Unit = {
-    val t1 = new Term("sequence", "agctttaa")
-    val query = new TermQuery(t1)
-    val scoreDocs = searcher.search(query, 10).scoreDocs
-    val reader = DirectoryReader.open(directory)
-    for (i <- 0 until scoreDocs.length) {
-      val docId = scoreDocs(i).doc
-      val doc = reader.document(docId)
-
-      val txt = doc.get("sequence")
-      println("Found hit in:")
-      println(txt)
-      val tokenStream = TokenSources.getTokenStream("sequence", reader.getTermVectors(docId), txt, analyzer(), -1)
-
-      val termAtt = tokenStream.addAttribute(classOf[CharTermAttribute])
-      val offsetAtt = tokenStream.addAttribute(classOf[OffsetAttribute])
-
-      tokenStream.reset()
-
-      var next = tokenStream.incrementToken()
-      while (next) {
-
-        val startOffset = offsetAtt.startOffset()
-        val endOffset = offsetAtt.endOffset()
-
-        val tokenText = txt.substring(startOffset, endOffset)
-        println(startOffset)
-        println(endOffset)
-        println(tokenText)
-        next = tokenStream.incrementToken()
-      }
-    }
-  }
-
   private def createTempDir(): Path = {
     val outputDir = Paths.get("target/test")
     if (!Files.exists(outputDir)) {
@@ -128,5 +84,47 @@ class SearchBenchmark {
               "maxGramSize" -> "8")
               .asJava)
           .build()).asJava)
+  }
+
+  @TearDown
+  def tearDown(): Unit = {
+    writer.commit()
+    writer.close()
+    directory.close()
+    FileUtils.forceDelete(tempDir.toFile)
+  }
+
+  @Benchmark
+  def searchDna(): Unit = {
+    val t1 = new Term("sequence", "agctttaa")
+    val query = new TermQuery(t1)
+    val scoreDocs = searcher.search(query, 10).scoreDocs
+    val reader = DirectoryReader.open(directory)
+    for (i <- 0 until scoreDocs.length) {
+      val docId = scoreDocs(i).doc
+      val doc = reader.document(docId)
+
+      val txt = doc.get("sequence")
+      println("Found hit in:")
+      println(txt)
+      val tokenStream = TokenSources.getTokenStream("sequence", reader.getTermVectors(docId), txt, analyzer(), -1)
+
+      val offsetAtt = tokenStream.addAttribute(classOf[OffsetAttribute])
+
+      tokenStream.reset()
+
+      var next = tokenStream.incrementToken()
+      while (next) {
+
+        val startOffset = offsetAtt.startOffset()
+        val endOffset = offsetAtt.endOffset()
+
+        val tokenText = txt.substring(startOffset, endOffset)
+        println(startOffset)
+        println(endOffset)
+        println(tokenText)
+        next = tokenStream.incrementToken()
+      }
+    }
   }
 }
