@@ -19,7 +19,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object GenomeIndexer {
 
-  private val Logger = LoggerFactory.getLogger(this.getClass)
+  private[this] val Logger = LoggerFactory.getLogger(this.getClass)
 
   implicit val system: ActorSystem = ActorSystem("GenomeIndexer")
 
@@ -39,7 +39,8 @@ object GenomeIndexer {
       }
     }
 
-    override def write(obj: FastaEntry): JsValue = JsObject("id" -> obj.id.value.toJson,
+    override def write(obj: FastaEntry): JsValue = JsObject(
+      "id" -> obj.id.value.toJson,
       "sequence" -> obj.sequence.value.toJson)
   }
 
@@ -52,6 +53,7 @@ object GenomeIndexer {
         .valueName("<file>")
         .action((x, c) => c.copy(fastaFile = x))
         .text("the fasta file to upload")
+
       opt[URI]('h', "host")
         .required()
         .valueName("<host>")
@@ -62,7 +64,7 @@ object GenomeIndexer {
     // parser.parse returns Option[C]
     parser.parse(args, Config()) match {
       case Some(config) => uploadFastaFileTo(config.fastaFile, config.clusterUrl)
-      case None => system.terminate()
+      case None         => system.terminate()
     }
   }
 
@@ -70,7 +72,7 @@ object GenomeIndexer {
     Logger.info("Starting to upload {} to {}", List(fastaFile, uri): _*)
 
     val future = FastaFlow.from(fastaFile.toPath)
-      .map(fastaEntry ⇒ IncomingMessage(Some(fastaEntry.id.value), fastaEntry))
+      .map(fastaEntry => IncomingMessage(Some(fastaEntry.id.value), fastaEntry))
       .runWith(ElasticsearchSink.create[FastaEntry](indexName = "genome",
         typeName = "sequence"))
 

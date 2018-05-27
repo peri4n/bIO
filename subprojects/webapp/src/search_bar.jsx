@@ -20,7 +20,7 @@ export default class SearchBar extends React.Component {
         oReq.setRequestHeader('Content-Type', 'text/plain');
 
         oReq.onload = () => {
-            document.getElementById('result').innerHTML = oReq.responseText
+            document.getElementById('result').innerHTML = oReq.responseText;
         };
 
         oReq.send();

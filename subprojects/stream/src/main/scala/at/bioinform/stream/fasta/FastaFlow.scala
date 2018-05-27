@@ -51,7 +51,7 @@ object FastaFlow {
     * @param line the line to be checked
     * @return true if the line is empty or starts with a '#'
     */
-  private def ignoreLine(line: ByteString): Boolean = {
+  private[this] def ignoreLine(line: ByteString): Boolean = {
     !(line.isEmpty || line.startsWith(FastaCommentStart))
   }
 }

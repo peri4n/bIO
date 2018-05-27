@@ -19,7 +19,7 @@ export default class FileUpload extends React.Component {
             oReq.open('POST', 'http://localhost:9000/index/add', true);
 
             oReq.onload = () => {
-                document.getElementById('ids').innerHTML = JSON.parse(oReq.responseText).join(' ')
+                document.getElementById('ids').innerHTML = JSON.parse(oReq.responseText).join(' ');
             };
 
             oReq.send(reader.result);
