@@ -11,8 +11,10 @@ libraryDependencies += "org.apache.lucene" % "lucene-analyzers-common" % "6.6.0"
 libraryDependencies += "org.typelevel" %% "cats-core" % "1.0.1"
 
 // test dependencies
-libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.0.1",
+libraryDependencies ++= Seq(
+  "org.scalatest" %% "scalatest" % "3.0.1",
   "com.typesafe.akka" %% "akka-stream-testkit" % "2.5.3",
+  "org.scalacheck" %% "scalacheck" % "1.14.0",
   "com.typesafe.akka" %% "akka-testkit" % "2.5.3") map {
   _ % Test
 }
