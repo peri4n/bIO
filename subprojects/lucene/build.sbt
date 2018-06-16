@@ -1,4 +1,4 @@
-name := "at/bioinform/lucene"
+name := "bIO-lucene"
 
 // lucene
 libraryDependencies += "org.apache.lucene" % "lucene-core" % "6.6.0"

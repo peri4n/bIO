@@ -1,3 +1,5 @@
+
+
 name := "bIO"
 
 lazy val commonSettings = Seq(
@@ -24,18 +26,21 @@ lazy val commonSettings = Seq(
 /** Project dependencies */
 lazy val root = project.in(file("."))
   .settings(commonSettings, coverageSettings)
-  .aggregate(lucene, stream, webapp)
+  .aggregate(lucene, io, webapp, core)
   .enablePlugins(CodacyCoveragePlugin)
 
 lazy val lucene = (project in file("subprojects/lucene"))
   .settings(commonSettings, coverageSettings)
 
-lazy val stream = (project in file("subprojects/stream"))
+lazy val io = (project in file("subprojects/io"))
   .dependsOn(lucene)
   .settings(commonSettings, coverageSettings)
 
 lazy val webapp = (project in file("subprojects/webapp"))
-  .dependsOn(stream)
+  .dependsOn(io)
+  .settings(commonSettings, coverageSettings)
+
+lazy val core = (project in file("subprojects/core"))
   .settings(commonSettings, coverageSettings)
 
 lazy val bench = (project in file("benchmarks"))
@@ -44,7 +49,7 @@ lazy val bench = (project in file("benchmarks"))
   .enablePlugins(JmhPlugin)
 
 lazy val tools = (project in file("tools"))
-  .dependsOn(stream)
+  .dependsOn(io)
   .settings(commonSettings)
 
 /** Coverage analysis settings */
