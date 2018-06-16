@@ -1,4 +1,4 @@
-package at.bioinform.stream.fasta
+package at.bioinform.io.fasta
 
 import java.nio.charset.StandardCharsets
 

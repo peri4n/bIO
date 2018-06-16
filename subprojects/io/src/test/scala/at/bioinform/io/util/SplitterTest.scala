@@ -1,4 +1,4 @@
-package at.bioinform.stream.util
+package at.bioinform.io.util
 
 import at.bioinform.lucene._
 import org.scalatest.{FunSpec, Matchers}

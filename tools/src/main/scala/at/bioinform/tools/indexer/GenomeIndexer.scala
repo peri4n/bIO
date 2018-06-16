@@ -8,7 +8,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.alpakka.elasticsearch.IncomingMessage
 import akka.stream.alpakka.elasticsearch.scaladsl.ElasticsearchSink
 import at.bioinform.lucene.{Id, Seq}
-import at.bioinform.stream.fasta.{FastaEntry, FastaFlow}
+import at.bioinform.io.fasta.{FastaEntry, FastaFlow}
 import org.apache.http.HttpHost
 import org.elasticsearch.client.RestClient
 import org.slf4j.LoggerFactory

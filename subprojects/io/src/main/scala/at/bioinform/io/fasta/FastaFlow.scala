@@ -1,4 +1,4 @@
-package at.bioinform.stream.fasta
+package at.bioinform.io.fasta
 
 import java.net.URI
 import java.nio.file.{Path, Paths}
@@ -36,7 +36,7 @@ object FastaFlow {
   }
 
   /**
-    * A flow that parses [[akka.util.ByteString]] into [[at.bioinform.stream.fasta.FastaEntry]]
+    * A flow that parses [[akka.util.ByteString]] into [[at.bioinform.io.fasta.FastaEntry]]
     *
     * The materialized value is the number of indexed sequences.
     */

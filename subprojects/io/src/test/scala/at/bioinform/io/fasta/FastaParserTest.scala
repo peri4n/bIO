@@ -1,4 +1,4 @@
-package at.bioinform.stream.fasta
+package at.bioinform.io.fasta
 
 import cats.instances.try_._
 import org.scalatest.prop.PropertyChecks

@@ -5,7 +5,7 @@ import java.nio.file.Paths
 import akka.stream.IOResult
 import akka.stream.scaladsl.{Flow, Keep}
 import at.bioinform.lucene.segment.Segment
-import at.bioinform.stream.util.Splitter
+import at.bioinform.io.util.Splitter
 import org.apache.lucene.document.Document
 import org.apache.lucene.store.SimpleFSDirectory
 

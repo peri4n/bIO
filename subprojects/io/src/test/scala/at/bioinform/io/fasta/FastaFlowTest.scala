@@ -1,4 +1,4 @@
-package at.bioinform.stream.fasta
+package at.bioinform.io.fasta
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
