@@ -5,7 +5,6 @@ import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import at.bioinform.webapp.config.Config
 import at.bioinform.webapp.db.{DatabaseProvider, TableDefinitions}
-import at.bioinform.webapp.directive.index.SequenceRoute
 import at.bioinform.webapp.repository.InMemorySequenceRepository
 import cats.data.Reader
 import com.typesafe.config.ConfigFactory
@@ -30,7 +29,7 @@ object Application extends TableDefinitions {
       db <- DatabaseProvider.test()
       _ <- Config.printConfiguration()
       _ <- createDbSchema(schema)
-      route <- SequenceRoute.index
+      route <- directive.Sequences.routes
     } yield route
 
     // needed for the future flatMap/onComplete in the end
