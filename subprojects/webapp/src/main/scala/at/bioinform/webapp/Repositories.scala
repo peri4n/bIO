@@ -1,10 +1,10 @@
 package at.bioinform.webapp
 
-import at.bioinform.webapp.model.index.IndexRepository
+import at.bioinform.webapp.repository.SequenceRepository
 
 trait Repositories {
 
-  def indexRepository: IndexRepository
+  def sequenceRepository: SequenceRepository
 
 }
 
@@ -12,8 +12,8 @@ object Repositories {
 
   import Env.repositories
 
-  val indexRepository = repositories map {
-    _.indexRepository
+  val sequenceRepository = repositories map {
+    _.sequenceRepository
   }
 
 }

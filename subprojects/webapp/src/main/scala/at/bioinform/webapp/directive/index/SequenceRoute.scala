@@ -1,6 +1,4 @@
-package at.bioinform.webapp.directives.index
-
-import java.nio.file.Paths
+package at.bioinform.webapp.directive.index
 
 import akka.http.scaladsl.marshalling.GenericMarshallers._
 import akka.http.scaladsl.marshalling.Marshal
@@ -13,14 +11,14 @@ import cats.data.Reader
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object IndexRoute extends TableDefinitions {
+object SequenceRoute extends TableDefinitions {
 
   def index: Reader[Env, Route] = Reader { env =>
-    path("index") {
+    path("sequence") {
       post {
         complete {
-          val id = env.repositories.indexRepository.create("first", Paths.get("path")).id.toString
-          Marshal(id).to[HttpResponse]
+          val id = env.repositories.sequenceRepository.create(("first", "path"))
+          Marshal(id.toString()).to[HttpResponse]
         }
       }
     }
