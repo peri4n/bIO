@@ -21,7 +21,7 @@ object Sequences extends TableDefinitions {
         complete {
           Marshal("Hello world!").to[HttpResponse]
         }
-      }
+      } ~
       post {
         complete {
           val id = sequenceRepository.create(("first", "path"))

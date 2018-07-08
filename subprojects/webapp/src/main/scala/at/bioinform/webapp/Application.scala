@@ -26,10 +26,10 @@ object Application extends TableDefinitions {
     implicit val materializer = ActorMaterializer()
 
     val route = for {
-      db <- DatabaseProvider.test()
+      _ <- DatabaseProvider.test()
       _ <- Config.printConfiguration()
       _ <- createDbSchema(schema)
-      route <- directive.Sequences.routes
+      route <- directive.Main.routes
     } yield route
 
     // needed for the future flatMap/onComplete in the end
