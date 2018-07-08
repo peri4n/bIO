@@ -9,11 +9,11 @@ case class Seq(value: String) {
     }
   }
 
-  def qGrams(qs: Iterable[Int], step: Int = 1): Iterable[Seq] = {
+  def qGrams(qs: Iterable[Int], step: Int): Iterable[Seq] = {
     qs.flatMap(q => qGrams(q, step))
   }
 
-  def qGrams(qMin: Int, qMax: Int, step: Int = 1): Iterable[Seq] = qGrams(qMin to qMax)
+  def qGrams(qMin: Int, qMax: Int, step: Int): Iterable[Seq] = qGrams(qMin to qMax, step)
 
 }
 
