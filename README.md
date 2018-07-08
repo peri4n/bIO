@@ -16,7 +16,7 @@ We try to solve all of there problems using modern approaches and best practices
 
 ## Quick Overview
 
-At its heart bIO is a web application. It uses the play framework in it's backend and react in the front end.
+At its heart bIO is a web application. It uses the [play framework](https://www.playframework.com/) in it's backend and [react](https://reactjs.org/) in the front end.
 
 The project is structured into different subprojects to enforce a clean separation of code between the 
 different layers:
