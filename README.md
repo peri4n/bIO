@@ -26,9 +26,13 @@ different layers:
 
 ## Getting Stared
 
-To run the application run:
+Running this application requires [sbt](https://www.scala-sbt.org/), an interactive build tool for tasks written in [Scala](https://www.scala-lang.org/).
 
-`sbt webapp/run`
+```
+git clone https://github.com/peri4n/bIO.git
+cd bIO
+sbt webapp/run
+```
 
 ## Algorithmic
 
