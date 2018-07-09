@@ -17,14 +17,14 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
 
   describe("A FastaFlow") {
     ignore("should parse an empty file.") {
-      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_empty.fa").toURI)
+      FastaFlow.from(getClass.getResource("/at/bioinform/io/fasta/fasta_empty.fa").toURI)
         .runWith(TestSink.probe[FastaEntry])
         .request(10)
         .expectComplete()
     }
 
     it("should parse a very standard FASTA file.") {
-      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_easy.fa").toURI)
+      FastaFlow.from(getClass.getResource("/at/bioinform/io/fasta/fasta_easy.fa").toURI)
         .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
@@ -46,7 +46,7 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
     }
 
     it("should parse a FASTA file with empty lines.") {
-      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_with_empty_lines.fa").toURI)
+      FastaFlow.from(getClass.getResource("/at/bioinform/io/fasta/fasta_with_empty_lines.fa").toURI)
         .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
@@ -64,7 +64,7 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
     }
 
     it("should parse a FASTA file with comments.") {
-      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_with_comments.fa").toURI)
+      FastaFlow.from(getClass.getResource("/at/bioinform/io/fasta/fasta_with_comments.fa").toURI)
         .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
@@ -82,7 +82,7 @@ class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunS
     }
 
     it("should parse a FASTA file containing sequence descriptions.") {
-      FastaFlow.from(getClass.getResource("/at/bioinform/stream/fasta/fasta_with_descriptions.fa").toURI)
+      FastaFlow.from(getClass.getResource("/at/bioinform/io/fasta/fasta_with_descriptions.fa").toURI)
         .runWith(TestSink.probe[FastaEntry])
         .request(2)
         .expectNext(
