@@ -16,7 +16,7 @@ We try to solve all of there problems using modern approaches and best practices
 
 ## Quick Overview
 
-At its heart bIO is a web application. It uses the play framework in it's backend and react in the front end.
+At its heart bIO is a web application. It uses the [play framework](https://www.playframework.com/) in it's backend and [react](https://reactjs.org/) in the front end.
 
 The project is structured into different subprojects to enforce a clean separation of code between the 
 different layers:
@@ -26,9 +26,13 @@ different layers:
 
 ## Getting Stared
 
-To run the application run:
+Running this application requires [sbt](https://www.scala-sbt.org/), an interactive build tool for tasks written in [Scala](https://www.scala-lang.org/).
 
-`sbt webapp/run`
+```
+git clone https://github.com/peri4n/bIO.git
+cd bIO
+sbt webapp/run
+```
 
 ## Algorithmic
 
