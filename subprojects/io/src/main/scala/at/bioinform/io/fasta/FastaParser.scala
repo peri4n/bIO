@@ -30,18 +30,13 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
   val FastaHeaderStart = ">"
 
   val header: FastaStep[Header] = StateT {
-    case input if input.isEmpty => Success((input, ""))
+    case input if input.isEmpty        => Success((input, ""))
     case input if !isHeaderLine(input) =>
       Failure(FastaParserException(s"Expected a '$FastaHeaderStart' at the start of a fasta entry but read: '${input.head}'"))
-    case input =>
+    case input                         =>
       val (id, rest) = input.tail.span(_ != '\n')
       Success((rest.filterNot(_ == '\n'), id.toString()))
   }
-
-  private def isHeaderLine(input: StringBuilder): Boolean = {
-    input.startsWith(FastaHeaderStart)
-  }
-
   /**
     * Parsing step to extract the entire sequence of an input.
     *
@@ -49,34 +44,24 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
     * the sequence is only extracted completely. If no new Fasta entry is
     * seen, we can be sure that the sequence is complete.
     */
-  val sequence: FastaStep[Option[String]] = StateT(input => {
-    if (containsEntryStart(input)) {
-      val size = input.prefixLength(_ != '>')
-      val (sequence, rest) = input.splitAt(size)
-      Success((rest + '\n', Some(sequence.toString())))
+  def sequence(greedy: Boolean): FastaStep[Option[String]] = StateT(input => {
+    if (greedy) {
+      Try((StringBuilder.newBuilder, Some(input.toString)))
     } else {
-      Success((input, None))
+      if (containsEntryStart(input)) {
+        val size = input.prefixLength(_ != '>')
+        val (sequence, rest) = input.splitAt(size)
+        Success((rest + '\n', Some(sequence.toString())))
+      } else {
+        Success((input, None))
+      }
     }
   })
 
-  private def containsEntryStart(input: StringBuilder): Boolean = {
-    input.prefixLength(_ != '>') != input.length
-  }
-
-  val greedySequence: FastaStep[Option[String]] = StateT(input => {
-      Try((StringBuilder.newBuilder, Some(input.toString)))
-  })
-
-  val entry: FastaStep[(Header, Option[String])] = for {
+  def entry(greedy: Boolean = false): FastaStep[(Header, Option[String])] = for {
     header <- header
-    body <- sequence
+    body <- sequence(greedy)
   } yield (header, body)
-
-  val greedyEntry: FastaStep[(Header, Option[String])] = for {
-    header <- header
-    body <- greedySequence
-  } yield (header, body)
-
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
 
@@ -89,23 +74,22 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
 
         sequenceBuilder ++= (line + '\n')
 
-        entry.run(sequenceBuilder) match {
-          case Success((builder, (head, Some(body)))) => {
+        entry().run(sequenceBuilder) match {
+          case Success((builder, (head, Some(body)))) =>
             push(out, FastaEntry(Id(head), Seq(body)))
             sequenceBuilder = builder
-          }
-          case Success((_, (_, None)))          => pull(in)
-          case Failure(e)                       => throw e
+          case Success((_, (_, None)))                => pull(in)
+          case Failure(e)                             => throw e
         }
       }
 
       override def onUpstreamFinish(): Unit = {
-          greedyEntry.run(sequenceBuilder) match {
-            case Success((_, (head, Some(body)))) =>
-              push(out, FastaEntry(Id(head), Seq(body)))
-            case Success((_, (_, None)))          => throw FastaParserException("something went wrong")
-            case Failure(e)                       => throw e
-          }
+        entry(true).run(sequenceBuilder) match {
+          case Success((_, (head, Some(body)))) =>
+            push(out, FastaEntry(Id(head), Seq(body)))
+          case Success((_, (_, None)))          => throw FastaParserException("something went wrong")
+          case Failure(e)                       => throw e
+        }
         super.onUpstreamFinish()
       }
     })
@@ -118,4 +102,12 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
   }
 
   override def shape: FlowShape[ByteString, FastaEntry] = FlowShape(in, out)
+
+  private def isHeaderLine(input: StringBuilder): Boolean = {
+    input.startsWith(FastaHeaderStart)
+  }
+
+  private def containsEntryStart(input: StringBuilder): Boolean = {
+    input.prefixLength(_ != '>') != input.length
+  }
 }

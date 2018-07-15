@@ -33,7 +33,7 @@ class FastaParserTest extends FunSpec with Matchers with PropertyChecks {
     it("should accept an empty string") {
       val input = new StringBuilder(0, "")
 
-      FastaParser.entry.runA(input) match {
+      FastaParser.entry().runA(input) match {
         case Success((header, None)) =>
           header shouldBe empty
         case _ => fail()
@@ -43,7 +43,7 @@ class FastaParserTest extends FunSpec with Matchers with PropertyChecks {
     it("should parse all ") {
       forAll { (header: String, sequence: String) =>
         val input = new StringBuilder(20, s">$header\n$sequence")
-        FastaParser.greedyEntry.run(input) match {
+        FastaParser.entry(true).run(input) match {
           case Success((builder, (h, Some(s)))) =>
             h shouldBe header
             s shouldBe sequence
