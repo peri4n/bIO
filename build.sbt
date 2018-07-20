@@ -17,8 +17,7 @@ lazy val commonSettings = Seq(
     "-Xfatal-warnings",
     "-deprecation",
     "-Xlint:missing-interpolator",
-    "-Ywarn-unused-import",
-    "-Ywarn-unused",
+    "-Ywarn-unused:imports,locals,patvars,privates",
     "-Ywarn-dead-code"
   )
 )
