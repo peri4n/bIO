@@ -10,7 +10,7 @@ class FastaParserTest extends FunSpec with Matchers with PropertyChecks {
 
   describe("A Fasta parser") {
     it("should extract the header line of a string builder in correct state") {
-      val input = new StringBuilder(20, ">id1 desc")
+      val input = FastaParser.State(new StringBuilder(20, ">id1 desc"))
 
       FastaParser.header.run(input) match {
         case Success((builder, id)) =>
@@ -21,7 +21,7 @@ class FastaParserTest extends FunSpec with Matchers with PropertyChecks {
     }
 
     it("should fail if the string builder doesn't start with a '>'") {
-      val input = new StringBuilder(20, "id1")
+      val input = FastaParser.State(new StringBuilder(20, "id1"))
 
       FastaParser.header.run(input) match {
         case Failure(exception) =>
@@ -31,23 +31,22 @@ class FastaParserTest extends FunSpec with Matchers with PropertyChecks {
     }
 
     it("should accept an empty string") {
-      val input = new StringBuilder(0, "")
+      val input = FastaParser.State(new StringBuilder(0, ""))
 
       FastaParser.entry().runA(input) match {
-        case Success((header, None)) =>
-          header shouldBe empty
+        case Success(x) => x shouldBe None
         case _ => fail()
       }
     }
 
     it("should parse all ") {
       forAll { (header: String, sequence: String) =>
-        val input = new StringBuilder(20, s">$header\n$sequence")
-        FastaParser.entry(true).run(input) match {
-          case Success((builder, (h, Some(s)))) =>
+        val input = FastaParser.State(new StringBuilder(20, s">$header\n$sequence"))
+
+        FastaParser.entry(true).runA(input) match {
+          case Success(Some((h, s))) =>
             h shouldBe header
             s shouldBe sequence
-            builder shouldBe empty
           case _ => fail()
         }
       }
