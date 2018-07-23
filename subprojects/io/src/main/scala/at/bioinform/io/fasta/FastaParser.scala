@@ -29,13 +29,23 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
 
     def startsWithHeader: Boolean = buffer.startsWith(FastaHeaderStart)
 
-    def setEndOfHeader() = copy(headerEnd = buffer.indexOf(System.lineSeparator()))
+    def setEndOfHeader() =
+      if (headerEnd == -1) {
+        if (startsWithHeader) {
+          val endOfHeader = buffer.indexOf(System.lineSeparator())
+          Success(copy(headerEnd = endOfHeader, cursor = endOfHeader))
+        } else {
+          Failure(FastaParserException(s"Expected $FastaHeaderStart"))
+        }
+      } else {
+        Success(this.copy(cursor = buffer.length))
+      }
 
     def setEndOfSequence(greedy: Boolean) = {
       if (greedy) {
-        copy(sequenceEnd = buffer.length - 1)
+        copy(sequenceEnd = buffer.length, cursor = 0)
       } else {
-        copy(sequenceEnd = buffer.indexOf(">", cursor))
+        copy(sequenceEnd = math.max(buffer.length, buffer.indexOf(FastaHeaderStart, cursor)), cursor = buffer.length)
       }
     }
 
@@ -45,7 +55,6 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
       } else {
         val header = buffer.substring(1, headerEnd)
         val sequence = buffer.substring(headerEnd + 1, sequenceEnd)
-
         buffer.clear()
         Some((header, sequence))
       }
@@ -58,7 +67,7 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
 
   val FastaHeaderStart = ">"
 
-  val header: FastaStep[Unit] = StateT.modify { _.setEndOfHeader() }
+  val header: FastaStep[Unit] = StateT.modifyF { _.setEndOfHeader() }
 
   /**
    * Parsing step to extract the entire sequence of an input.
