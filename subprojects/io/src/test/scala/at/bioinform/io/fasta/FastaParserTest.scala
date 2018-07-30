@@ -10,7 +10,7 @@ class FastaParserTest extends FunSpec with Matchers with PropertyChecks {
 
   describe("A Fasta parser") {
     it("should extract the header line of a string builder in correct state") {
-      val buffer = new StringBuilder(20, ">id1 desc\n")
+      val buffer = new StringBuilder(20, ">id1 desc")
       val input = FastaParser.State(buffer)
 
       FastaParser.header.runS(input) match {
@@ -44,12 +44,12 @@ class FastaParserTest extends FunSpec with Matchers with PropertyChecks {
     it("should parse all ") {
       forAll { (header: String, sequence: String) =>
         whenever(!header.isEmpty && !sequence.isEmpty) {
-          val input = FastaParser.State(new StringBuilder(20, s">$header\n$sequence"))
+          val input = FastaParser.State(new StringBuilder(20, s">$header"))
 
           FastaParser.entry(true).runA(input) match {
             case Success(Some((h, s))) =>
               h shouldBe header
-              s shouldBe sequence
+              s shouldBe None
             case _                     => fail()
           }
         }

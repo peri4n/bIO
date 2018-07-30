@@ -32,13 +32,12 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
     def setEndOfHeader() =
       if (headerEnd == -1) {
         if (startsWithHeader) {
-          val endOfHeader = buffer.indexOf(System.lineSeparator())
-          Success(copy(headerEnd = endOfHeader, cursor = endOfHeader))
+          Success(copy(headerEnd = buffer.length, cursor = buffer.length))
         } else {
           Failure(FastaParserException(s"Expected $FastaHeaderStart"))
         }
       } else {
-        Success(this.copy(cursor = buffer.length))
+        Success(copy(cursor = buffer.length))
       }
 
     def setEndOfSequence(greedy: Boolean) = {
