@@ -1,6 +1,7 @@
 package at.bioinform.io.fasta
 
 import cats.instances.try_._
+import org.scalacheck.Shrink
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{FunSpec, Matchers}
 
@@ -8,23 +9,24 @@ import scala.util.{Failure, Success}
 
 class FastaParserTest extends FunSpec with Matchers with PropertyChecks {
 
+  implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
+
   describe("A Fasta parser") {
     it("should extract the header line of a string builder in correct state") {
-      val buffer = new StringBuilder(20, ">id1 desc")
-      val input = FastaParser.State(buffer)
+      val input = FastaParser.State(new StringBuilder(20))
 
-      FastaParser.header.runS(input) match {
+      FastaParser.add(">id1 desc").runS(input) match {
         case Success(newState) =>
           newState.headerEnd shouldBe 9
-          newState.buffer shouldBe buffer
+          newState.buffer.toString() shouldBe ">id1 desc"
         case _ => fail()
       }
     }
 
     it("should fail if the string builder doesn't start with a '>'") {
-      val input = FastaParser.State(new StringBuilder(20, "id1"))
+      val input = FastaParser.State(new StringBuilder(20))
 
-      FastaParser.header.runS(input) match {
+      FastaParser.add("id1").runS(input) match {
         case Failure(exception) =>
           exception shouldBe a [FastaParserException]
         case _ => fail()
@@ -32,9 +34,10 @@ class FastaParserTest extends FunSpec with Matchers with PropertyChecks {
     }
 
     it("should not accept an empty string") {
-      val input = FastaParser.State(new StringBuilder(0, ""))
+      val input = FastaParser.State(new StringBuilder(20))
 
-      FastaParser.entry().runA(input) match {
+
+      FastaParser.add("").runA(input) match {
         case Failure(exception) =>
           exception shouldBe a [FastaParserException]
         case _ => fail()
@@ -42,15 +45,28 @@ class FastaParserTest extends FunSpec with Matchers with PropertyChecks {
     }
 
     it("should parse all ") {
-      forAll { (header: String, sequence: String) =>
-        whenever(!header.isEmpty && !sequence.isEmpty) {
-          val input = FastaParser.State(new StringBuilder(20, s">$header"))
+      forAll { (header: String, line1: String, line2: String) =>
+        whenever(!header.isEmpty) {
+          val input = FastaParser.State(new StringBuilder(20))
 
-          FastaParser.entry(true).runA(input) match {
-            case Success(Some((h, s))) =>
+          val Success((state1, value1)) = FastaParser.add(">" + header).run(input)
+          value1 match {
+            case None =>
+            case _ => fail()
+          }
+
+          val Success((state2, value2)) = FastaParser.add(line1).run(state1)
+          value2 match {
+            case None =>
+            case _ => fail()
+          }
+
+          val Success((_, value3)) = FastaParser.add(line2, true).run(state2)
+          value3 match {
+            case Some((h, sequence)) =>
               h shouldBe header
-              s shouldBe None
-            case _                     => fail()
+              sequence shouldBe (line1 + line2)
+            case _ => fail()
           }
         }
       }
