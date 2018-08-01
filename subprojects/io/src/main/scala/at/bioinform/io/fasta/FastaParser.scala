@@ -13,15 +13,57 @@ import scala.collection.mutable
 import scala.util.{Failure, Success, Try}
 
 /**
-  * Flow that parses an incoming byte stream representing FASTA-formatted sequence data.
-  *
-  * Note: This flow expects it's income in chunks of lines!!!
-  */
+ * Flow that parses an incoming byte stream representing FASTA-formatted sequence data.
+ *
+ * Note: This flow expects it's income in chunks of lines!!!
+ */
 private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
-  type Header = String
+  type FastaStep[A] = StateT[Try, State, A]
 
-  type FastaStep[A] = StateT[Try, mutable.StringBuilder, A]
+  case class State(buffer: mutable.StringBuilder, headerEnd: Int = -1, sequenceEnd: Int = -1, cursor: Int = 0) {
+
+    def isEmpty = buffer.isEmpty
+
+    def appendLine(line: String): Try[State] = {
+      if (startsWithHeader(line)) {
+        if (headerEnd == -1) { // new header
+          Success(copy(buffer = buffer.append(line), headerEnd = buffer.length))
+        } else { // next header
+          Success(copy(sequenceEnd = buffer.length, buffer = buffer.append(line)))
+        }
+      } else {
+        if (headerEnd == -1) {
+          Failure(FastaParserException("Expected a start of a header file"))
+        } else {
+          Success(copy(buffer = buffer.append(line)))
+        }
+      }
+    }
+
+    def startsWithHeader(line: String): Boolean = line.startsWith(FastaHeaderStart)
+
+    def extractEntry(greedy: Boolean): Try[(State, Option[(String, String)])] = {
+      if (greedy) {
+        val header = buffer.substring(1, headerEnd)
+        val sequence = buffer.substring(headerEnd, buffer.length)
+        buffer.clear()
+        Success((copy( buffer = this.buffer), Some((header, sequence))))
+      } else {
+        if (sequenceEnd == -1) {
+          Success((this, None))
+        } else {
+          val header = buffer.substring(1, headerEnd)
+          val sequence = buffer.substring(headerEnd, sequenceEnd)
+          for (i <- sequenceEnd until buffer.length) {
+            buffer.setCharAt(i - sequenceEnd, buffer.charAt(i))
+          }
+          buffer.setLength(buffer.length - sequenceEnd)
+          Success((copy(sequenceEnd = -1, headerEnd = buffer.length, buffer = this.buffer), Some((header, sequence))))
+        }
+      }
+    }
+  }
 
   val in: Inlet[ByteString] = Inlet[ByteString]("input")
 
@@ -29,66 +71,40 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
 
   val FastaHeaderStart = ">"
 
-  val header: FastaStep[Header] = StateT {
-    case input if input.isEmpty        => Success((input, ""))
-    case input if !isHeaderLine(input) =>
-      Failure(FastaParserException(s"Expected a '$FastaHeaderStart' at the start of a fasta entry but read: '${input.head}'"))
-    case input                         =>
-      val (id, rest) = input.tail.span(_ != '\n')
-      Success((rest.filterNot(_ == '\n'), id.toString()))
-  }
-  /**
-    * Parsing step to extract the entire sequence of an input.
-    *
-    * The returned sequence is represented as an optional string because
-    * the sequence is only extracted completely. If no new Fasta entry is
-    * seen, we can be sure that the sequence is complete.
-    */
-  def sequence(greedy: Boolean): FastaStep[Option[String]] = StateT(input => {
-    if (greedy) {
-      Try((StringBuilder.newBuilder, Some(input.toString)))
-    } else {
-      if (containsEntryStart(input)) {
-        val size = input.prefixLength(_ != '>')
-        val (sequence, rest) = input.splitAt(size)
-        Success((rest + '\n', Some(sequence.toString())))
-      } else {
-        Success((input, None))
-      }
-    }
-  })
+  private def appendLine(line: String): FastaStep[Unit] = StateT.modifyF { _.appendLine(line) }
 
-  def entry(greedy: Boolean = false): FastaStep[(Header, Option[String])] = for {
-    header <- header
-    body <- sequence(greedy)
-  } yield (header, body)
+  def entry(greedy: Boolean = false): FastaStep[Option[(String, String)]] = StateT { _.extractEntry(greedy) }
+
+  def add(line: String, greedy: Boolean = false): FastaStep[Option[(String, String)]] = {
+      for {
+      _ <- appendLine(line)
+      entry <- entry(greedy)
+    } yield entry
+  }
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
 
-    private var sequenceBuilder = new mutable.StringBuilder(1000)
+    private var state = State(new mutable.StringBuilder(1000))
 
     setHandler(in, new InHandler {
 
       override def onPush(): Unit = {
         val line = grab(in).decodeString(StandardCharsets.UTF_8)
 
-        sequenceBuilder ++= (line + '\n')
-
-        entry().run(sequenceBuilder) match {
-          case Success((builder, (head, Some(body)))) =>
-            push(out, FastaEntry(Id(head), Seq(body)))
-            sequenceBuilder = builder
-          case Success((_, (_, None)))                => pull(in)
-          case Failure(e)                             => throw e
+        val Success((newState, ret)) = add(line).run(state)
+         ret match {
+          case Some((h, s)) => push(out, FastaEntry(Id(h), Seq(s)))
+          case None         => pull(in)
         }
+
+        state = newState
       }
 
       override def onUpstreamFinish(): Unit = {
-        entry(true).run(sequenceBuilder) match {
-          case Success((_, (head, Some(body)))) =>
-            push(out, FastaEntry(Id(head), Seq(body)))
-          case Success((_, (_, None)))          => throw FastaParserException("something went wrong")
-          case Failure(e)                       => throw e
+        val Success((_, ret)) = add("", true).run(state)
+        ret match {
+          case Some((h, s)) => push(out, FastaEntry(Id(h), Seq(s)))
+          case None         => pull(in)
         }
         super.onUpstreamFinish()
       }
@@ -102,12 +118,4 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
   }
 
   override def shape: FlowShape[ByteString, FastaEntry] = FlowShape(in, out)
-
-  private def isHeaderLine(input: StringBuilder): Boolean = {
-    input.startsWith(FastaHeaderStart)
-  }
-
-  private def containsEntryStart(input: StringBuilder): Boolean = {
-    input.prefixLength(_ != '>') != input.length
-  }
 }

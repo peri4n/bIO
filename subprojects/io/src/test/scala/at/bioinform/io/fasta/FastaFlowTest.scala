@@ -9,7 +9,7 @@ import org.scalatest.{BeforeAndAfterAll, FunSpecLike}
 
 class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunSpecLike with BeforeAndAfterAll {
 
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   override def afterAll(): Unit = {
     TestKit.shutdownActorSystem(system)
