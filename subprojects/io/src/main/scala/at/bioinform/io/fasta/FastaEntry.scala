@@ -1,6 +1,6 @@
 package at.bioinform.io.fasta
 
-import at.bioinform.lucene._
+import at.bioinform.io._
 
 case class FastaEntry(id: Id, desc: Option[Desc], sequence: Seq)
 

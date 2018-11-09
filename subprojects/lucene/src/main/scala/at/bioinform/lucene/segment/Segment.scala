@@ -1,6 +1,6 @@
 package at.bioinform.lucene.segment
 
-import at.bioinform.lucene.{Desc, Id, Pos, Seq}
+import at.bioinform.io._
 
 /**
   * A segment represents a part of a biological sequence.

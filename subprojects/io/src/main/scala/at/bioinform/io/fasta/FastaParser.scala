@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets
 import akka.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
 import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
 import akka.util.ByteString
-import at.bioinform.lucene.{Id, Seq}
+import at.bioinform.io._
 import cats.data.StateT
 import cats.instances.try_._
 
@@ -22,8 +22,6 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
   type FastaStep[A] = StateT[Try, State, A]
 
   case class State(buffer: mutable.StringBuilder, headerEnd: Int = -1, sequenceEnd: Int = -1, cursor: Int = 0) {
-
-    def isEmpty = buffer.isEmpty
 
     def appendLine(line: String): Try[State] = {
       if (startsWithHeader(line)) {
@@ -43,12 +41,12 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
 
     def startsWithHeader(line: String): Boolean = line.startsWith(FastaHeaderStart)
 
-    def extractEntry(greedy: Boolean): Try[(State, Option[(String, String)])] = {
+    def extractEntry(greedy: Boolean): Try[(State, Option[FastaEntry])] = {
       if (greedy) {
         val header = buffer.substring(1, headerEnd)
         val sequence = buffer.substring(headerEnd, buffer.length)
         buffer.clear()
-        Success((copy( buffer = this.buffer), Some((header, sequence))))
+        Success((copy( buffer = this.buffer), Some(FastaEntry(Id(header), Seq(sequence)))))
       } else {
         if (sequenceEnd == -1) {
           Success((this, None))
@@ -59,7 +57,7 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
             buffer.setCharAt(i - sequenceEnd, buffer.charAt(i))
           }
           buffer.setLength(buffer.length - sequenceEnd)
-          Success((copy(sequenceEnd = -1, headerEnd = buffer.length, buffer = this.buffer), Some((header, sequence))))
+          Success((copy(sequenceEnd = -1, headerEnd = buffer.length, buffer = this.buffer), Some(FastaEntry(Id(header), Seq(sequence)))))
         }
       }
     }
@@ -73,9 +71,9 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
 
   private def appendLine(line: String): FastaStep[Unit] = StateT.modifyF { _.appendLine(line) }
 
-  def entry(greedy: Boolean = false): FastaStep[Option[(String, String)]] = StateT { _.extractEntry(greedy) }
+  def entry(greedy: Boolean = false): FastaStep[Option[FastaEntry]] = StateT { _.extractEntry(greedy) }
 
-  def add(line: String, greedy: Boolean = false): FastaStep[Option[(String, String)]] = {
+  def add(line: String, greedy: Boolean = false): FastaStep[Option[FastaEntry]] = {
       for {
       _ <- appendLine(line)
       entry <- entry(greedy)
@@ -93,7 +91,7 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
 
         val Success((newState, ret)) = add(line).run(state)
          ret match {
-          case Some((h, s)) => push(out, FastaEntry(Id(h), Seq(s)))
+          case Some(entry) => push(out, entry)
           case None         => pull(in)
         }
 
@@ -103,7 +101,7 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
       override def onUpstreamFinish(): Unit = {
         val Success((_, ret)) = add("", true).run(state)
         ret match {
-          case Some((h, s)) => push(out, FastaEntry(Id(h), Seq(s)))
+          case Some(entry) => push(out, entry)
           case None         => pull(in)
         }
         super.onUpstreamFinish()

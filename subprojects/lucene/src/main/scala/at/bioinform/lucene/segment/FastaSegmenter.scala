@@ -1,7 +1,7 @@
-package at.bioinform.io.fasta
+package at.bioinform.lucene.segment
 
 import akka.stream.scaladsl.Flow
-import at.bioinform.lucene.segment.Segment
+import at.bioinform.io.fasta.FastaEntry
 
 object FastaSegmenter {
 

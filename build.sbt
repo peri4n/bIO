@@ -29,10 +29,11 @@ lazy val root = project.in(file("."))
   .enablePlugins(CodacyCoveragePlugin)
 
 lazy val lucene = (project in file("subprojects/lucene"))
+  .dependsOn(io)
   .settings(commonSettings, coverageSettings)
 
 lazy val io = (project in file("subprojects/io"))
-  .dependsOn(lucene)
+  .dependsOn(core)
   .settings(commonSettings, coverageSettings)
 
 lazy val webapp = (project in file("subprojects/webapp"))

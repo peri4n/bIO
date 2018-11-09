@@ -1,11 +1,6 @@
 package at.bioinform
 
-import org.apache.lucene.document.Document
-
-package object lucene {
-
-  /** A transformer takes a thing and returns a document ready for Lucene indexing. */
-  type Transformer[A] = A => Document
+package object io {
 
   /** A position in a biological seqence. */
   case class Pos(value: Int) extends AnyVal {

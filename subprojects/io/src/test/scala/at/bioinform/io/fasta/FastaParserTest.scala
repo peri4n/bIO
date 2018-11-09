@@ -63,9 +63,9 @@ class FastaParserTest extends FunSpec with Matchers with PropertyChecks {
 
           val Success((_, value3)) = FastaParser.add(line2, true).run(state2)
           value3 match {
-            case Some((h, sequence)) =>
-              h shouldBe header
-              sequence shouldBe (line1 + line2)
+            case Some(entry) =>
+              entry.id.value shouldBe header
+              entry.sequence.value shouldBe (line1 + line2)
             case _ => fail()
           }
         }

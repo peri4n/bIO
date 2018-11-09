@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.TestKit
-import at.bioinform.lucene.{Id, Seq}
+import at.bioinform.io.{Id, Seq}
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike}
 
 class FastaFlowTest extends TestKit(ActorSystem("FastaProcessorTest")) with FunSpecLike with BeforeAndAfterAll {
