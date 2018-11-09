@@ -1,9 +1,7 @@
-package at.bioinform.core
+package at.bioinform.core.alphabet
 
 /**
   * Fixed size alphabet
-  *
-  * @tparam T type of the elements
   */
 trait Alphabet {
 

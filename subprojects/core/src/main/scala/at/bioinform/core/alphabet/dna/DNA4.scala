@@ -1,15 +1,16 @@
-package at.bioinform.core
+package at.bioinform.core.alphabet.dna
 
+import at.bioinform.core.alphabet.{Alphabet, BitUtil}
 import at.bioinform.seq.Chain
 
 object DNA4 extends Alphabet {
 
-  override type elemType = Nuc
+  override type elemType = Nuc4
 
   override val size = 4
 
   /** Converts a symbol to an `Int` */
-  override def toInt(symbol: Nuc): Int = symbol match {
+  override def toInt(symbol: Nuc4): Int = symbol match {
     case A => 0
     case C => 1
     case G => 2
@@ -29,9 +30,9 @@ object DNA4 extends Alphabet {
   /** For performance reasons */
   private val nucleotides = Array(A, C, G, T)
 
-  override def fromInt(index: Int): Nuc = if (0 <= index && index < 4) nucleotides(index) else A
+  override def fromInt(index: Int): Nuc4 = if (0 <= index && index < 4) nucleotides(index) else A
 
-  override def fromChar(char: Char): Nuc = char match {
+  override def fromChar(char: Char): Nuc4 = char match {
     case 'A' | 'a' => A
     case 'C' | 'c' => C
     case 'G' | 'g' => G

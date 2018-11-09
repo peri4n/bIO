@@ -1,6 +1,6 @@
 package at.bioinform.generators
 
-import at.bioinform.core._
+import at.bioinform.core.alphabet.dna._
 import org.scalacheck.Gen
 
 object Generate {

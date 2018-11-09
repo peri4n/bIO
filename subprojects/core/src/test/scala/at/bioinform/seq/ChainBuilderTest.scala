@@ -1,6 +1,6 @@
 package at.bioinform.seq
 
-import at.bioinform.core.DNA4._
+import at.bioinform.core.alphabet.dna.DNA4._
 import at.bioinform.generators.Generate
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{FunSpec, Matchers}

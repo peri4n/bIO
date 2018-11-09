@@ -1,4 +1,4 @@
-package at.bioinform.core
+package at.bioinform.core.alphabet
 
 abstract class BitUtil(private val alphabet: Alphabet) {
 

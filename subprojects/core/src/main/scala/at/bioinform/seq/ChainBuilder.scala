@@ -1,6 +1,6 @@
 package at.bioinform.seq
 
-import at.bioinform.core.Alphabet
+import at.bioinform.core.alphabet.Alphabet
 
 case class ChainBuilder[A <: Alphabet](initialCapacity: Int)(implicit val alphabet: A) {
 

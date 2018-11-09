@@ -3,7 +3,8 @@ package at.bioinform.seq
 import java.util.Arrays
 import java.util.Objects
 
-import at.bioinform.core.{Alphabet, DNA4}
+import at.bioinform.core.alphabet.Alphabet
+import at.bioinform.core.alphabet.dna.DNA4
 
 class Chain[A <: Alphabet] private[seq](private[seq] val bits: Array[Long], val length: Int)(implicit val alphabet: A) {
 
