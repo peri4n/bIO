@@ -56,9 +56,9 @@ object DNA5 extends Alphabet {
 
   object Dna5BitUtil extends BitUtil(DNA5) {
 
-    @inline def positionInChunk(pos: Int) = pos % 32
+    @inline def positionInChunk(pos: Int) = pos % 21
 
-    @inline def indexOfChunk(pos: Int) = pos / 32
+    @inline def indexOfChunk(pos: Int) = pos / 21
 
     @inline def symbolsPerChunk() = 21
 

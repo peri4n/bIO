@@ -1,12 +1,13 @@
 package at.bioinform.seq
 
-import at.bioinform.core.alphabet.dna.DNA4._
 import at.bioinform.core.alphabet.dna._
 import at.bioinform.generators.Generate
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{FunSpec, Matchers}
 
-class ChainTest extends FunSpec with Matchers with GeneratorDrivenPropertyChecks {
+class ChainOfDna4Test extends FunSpec with Matchers with GeneratorDrivenPropertyChecks {
+
+  import at.bioinform.core.alphabet.dna.DNA4._
 
   describe("A chain") {
 

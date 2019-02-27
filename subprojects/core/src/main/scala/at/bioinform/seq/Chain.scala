@@ -4,7 +4,7 @@ import java.util.Arrays
 import java.util.Objects
 
 import at.bioinform.core.alphabet.Alphabet
-import at.bioinform.core.alphabet.dna.DNA4
+import at.bioinform.core.alphabet.dna.{DNA4, DNA5}
 
 class Chain[A <: Alphabet] private[seq](private[seq] val bits: Array[Long], val length: Int)(implicit val alphabet: A) {
 
@@ -71,14 +71,13 @@ object Chain {
 
   def apply[A <: Alphabet](value: String )(implicit alphabet: A ): Chain[A] = {
     val util = alphabet.bitUtil
-    import util._
 
     val numberOfCharacters = value.length
-    val buffer = bufferForSymbols(numberOfCharacters)
+    val buffer = util.bufferForSymbols(numberOfCharacters)
 
     for((symbol, pos) <- value.zipWithIndex) {
       val symbolBits = alphabet.toInt(symbol).toLong
-      setPatternAtPosition(symbolBits, pos, buffer)
+      util.setPatternAtPosition(symbolBits, pos, buffer)
     }
     new Chain(buffer, numberOfCharacters)(alphabet)
   }
@@ -87,5 +86,7 @@ object Chain {
   implicit def fromString[A <: Alphabet](x: String)(implicit alphabet: A): Chain[A] = Chain(x)(alphabet)
 
   def fromDna4(x: String) = Chain(x)(DNA4)
+
+  def fromDna5(x: String) = Chain(x)(DNA5)
 
 }
