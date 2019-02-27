@@ -9,13 +9,12 @@ import at.bioinform.core.alphabet.dna.DNA4
 class Chain[A <: Alphabet] private[seq](private[seq] val bits: Array[Long], val length: Int)(implicit val alphabet: A) {
 
   val util = alphabet.bitUtil
-  import util._
 
   def substring(start: Int, length: Int): Chain[A] = {
-    val buffer = bufferForSymbols(length)
+    val buffer = util.bufferForSymbols(length)
     for ((position, positionInSubString) <- (start until start + length).zipWithIndex) {
-      val symbolBits = getPatternAtPosition(position, bits)
-      setPatternAtPosition(symbolBits, positionInSubString, buffer)
+      val symbolBits = util.getPatternAtPosition(position, bits)
+      util.setPatternAtPosition(symbolBits, positionInSubString, buffer)
     }
     new Chain(buffer, length)(alphabet)
   }
@@ -25,7 +24,7 @@ class Chain[A <: Alphabet] private[seq](private[seq] val bits: Array[Long], val 
   }
 
   def apply(pos: Int): alphabet.elemType = {
-    val bitMaskOfSymbol = getPatternAtPosition(pos, bits)
+    val bitMaskOfSymbol = util.getPatternAtPosition(pos, bits)
     alphabet.fromInt(bitMaskOfSymbol.toInt)
   }
 
@@ -40,7 +39,7 @@ class Chain[A <: Alphabet] private[seq](private[seq] val bits: Array[Long], val 
 
   def qGrams(qMin: Int, qMax: Int, step: Int): Iterable[Chain[A]] = qGrams(qMin to qMax, step)
 
-  def bitPattern: String = bits.map( long => String.format(s"%${bitsToStore(length)}s", java.lang.Long.toBinaryString(long)).replace(' ', '0')).mkString("")
+  def bitPattern: String = bits.map( long => String.format(s"%${util.bitsToStore(length)}s", java.lang.Long.toBinaryString(long)).replace(' ', '0')).mkString("")
 
   override def equals(obj: scala.Any): Boolean = {
      if (obj == null) {
@@ -62,7 +61,7 @@ class Chain[A <: Alphabet] private[seq](private[seq] val bits: Array[Long], val 
   override def hashCode(): Int = Objects.hash(Int.box(Arrays.hashCode(bits)), Int.box(length))
 
   override def toString: String = (0 until length).foldLeft(new StringBuilder(length)) { (builder, position) =>
-    val symbolPattern = getPatternAtPosition(position,bits)
+    val symbolPattern = util.getPatternAtPosition(position,bits)
     builder += alphabet.fromInt(symbolPattern.toInt).char
   }.result()
 

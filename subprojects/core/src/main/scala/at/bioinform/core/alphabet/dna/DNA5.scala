@@ -9,7 +9,7 @@ object DNA5 extends Alphabet {
 
   override val size = 5
 
-  val elements = List(A, C, G, T)
+  val elements = List(A, C, G, T, N)
 
   /** For performance reasons */
   private val nucleotides = Array(A, C, G, T, N)
@@ -28,7 +28,7 @@ object DNA5 extends Alphabet {
     case 'C' | 'c' => 1
     case 'G' | 'g' => 2
     case 'T' | 't' => 3
-    case 'N' | 'n' => 3
+    case 'N' | 'n' => 4
     case _ => 0
   }
 
@@ -39,7 +39,7 @@ object DNA5 extends Alphabet {
     case 'C' | 'c' => C
     case 'G' | 'g' => G
     case 'T' | 't' => T
-    case 'N' | 'n' => T
+    case 'N' | 'n' => N
     case _ => A
   }
 
