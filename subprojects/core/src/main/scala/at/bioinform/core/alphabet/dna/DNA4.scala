@@ -3,23 +3,28 @@ package at.bioinform.core.alphabet.dna
 import at.bioinform.core.alphabet.{Alphabet, BitUtil}
 import at.bioinform.seq.Chain
 
+import scala.annotation.switch
+
 object DNA4 extends Alphabet {
 
-  override type elemType = Nuc4
+  type elemType = Nuc4
 
   override val size = 4
 
+  val elements = List(A, C, G, T)
+
+  /** For performance reasons */
+  private[this] val nucleotides = Array(A, C, G, T)
+
   /** Converts a symbol to an `Int` */
-  override def toInt(symbol: Nuc4): Int = symbol match {
+  override def toInt(symbol: Nuc4@switch): Int = symbol match {
     case A => 0
     case C => 1
     case G => 2
     case T => 3
   }
 
-  val elements = List(A, C, G, T)
-
-  override def toInt(char: Char): Int = char match {
+  override def toInt(char: Char@switch): Int = char match {
     case 'A' | 'a' => 0
     case 'C' | 'c' => 1
     case 'G' | 'g' => 2
@@ -27,18 +32,17 @@ object DNA4 extends Alphabet {
     case _ => 0
   }
 
-  /** For performance reasons */
-  private val nucleotides = Array(A, C, G, T)
-
   override def fromInt(index: Int): Nuc4 = if (0 <= index && index < 4) nucleotides(index) else A
 
-  override def fromChar(char: Char): Nuc4 = char match {
+  override def fromChar(char: Char@switch): Nuc4 = char match {
     case 'A' | 'a' => A
     case 'C' | 'c' => C
     case 'G' | 'g' => G
     case 'T' | 't' => T
     case _ => A
   }
+
+  override def isCaseSensitive: Boolean = false
 
   override def bitUtil = Dna4BitUtil
 

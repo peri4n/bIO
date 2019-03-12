@@ -4,6 +4,7 @@ import at.bioinform.core.alphabet.dna._
 import at.bioinform.generators.Generate
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{FunSpec, Matchers}
+import cats.implicits._
 
 class ChainOfDna4Test extends FunSpec with Matchers with GeneratorDrivenPropertyChecks {
 
@@ -40,14 +41,14 @@ class ChainOfDna4Test extends FunSpec with Matchers with GeneratorDrivenProperty
     }
 
     it("can compute substrings.") {
-      forAll ((Generate.dna4WithLength, "sequenceWithPosition")) { case (seq: String, pos: Int) =>
+      forAll((Generate.dna4WithLength, "sequenceWithPosition")) { case (seq: String, pos: Int) =>
         Chain(seq).substring(pos) shouldBe Chain(seq.substring(pos))
       }
     }
 
     it("can compare to itself.") {
-      forAll ((Generate.dna4, "sequence1"), (Generate.dna4, "sequence2")) { (seq1: String, seq2: String) =>
-        whenever(seq1 != seq2) {
+      forAll((Generate.dna4, "sequence1"), (Generate.dna4, "sequence2")) { (seq1: String, seq2: String) =>
+        whenever(seq1 =!= seq2) {
           Chain.fromDna4(seq1) shouldNot be(Chain.fromDna4(seq2))
         }
       }
@@ -68,7 +69,7 @@ class ChainOfDna4Test extends FunSpec with Matchers with GeneratorDrivenProperty
     }
 
     it("can be converted to string.") {
-      forAll ((Generate.dna4, "sequence")) { seq: String =>
+      forAll((Generate.dna4, "sequence")) { seq: String =>
         Chain.fromString(seq).toString shouldBe seq
       }
     }

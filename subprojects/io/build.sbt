@@ -8,7 +8,7 @@ libraryDependencies += "org.apache.lucene" % "lucene-core" % "6.6.0"
 libraryDependencies += "org.apache.lucene" % "lucene-analyzers-common" % "6.6.0"
 
 // cats
-libraryDependencies += "org.typelevel" %% "cats-core" % "1.0.1"
+libraryDependencies += "org.typelevel" %% "cats-core" % "1.6.0"
 
 // test dependencies
 libraryDependencies ++= Seq(

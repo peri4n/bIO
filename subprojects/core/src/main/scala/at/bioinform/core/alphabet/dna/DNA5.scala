@@ -3,19 +3,21 @@ package at.bioinform.core.alphabet.dna
 import at.bioinform.core.alphabet.{Alphabet, BitUtil}
 import at.bioinform.seq.Chain
 
+import scala.annotation.switch
+
 object DNA5 extends Alphabet {
 
-  override type elemType = Nuc5
+  type elemType = Nuc5
 
   override val size = 5
 
   val elements = List(A, C, G, T, N)
 
   /** For performance reasons */
-  private val nucleotides = Array(A, C, G, T, N)
+  private[this] val nucleotides = Array(A, C, G, T, N)
 
   /** Converts a symbol to an `Int` */
-  override def toInt(symbol: Nuc5): Int = symbol match {
+  override def toInt(symbol: Nuc5@switch): Int = symbol match {
     case A => 0
     case C => 1
     case G => 2
@@ -23,7 +25,7 @@ object DNA5 extends Alphabet {
     case N => 4
   }
 
-  override def toInt(char: Char): Int = char match {
+  override def toInt(char: Char@switch): Int = char match {
     case 'A' | 'a' => 0
     case 'C' | 'c' => 1
     case 'G' | 'g' => 2
@@ -34,7 +36,7 @@ object DNA5 extends Alphabet {
 
   override def fromInt(index: Int): Nuc5 = if (0 <= index && index < 5) nucleotides(index) else A
 
-  override def fromChar(char: Char): Nuc5 = char match {
+  override def fromChar(char: Char@switch): Nuc5 = char match {
     case 'A' | 'a' => A
     case 'C' | 'c' => C
     case 'G' | 'g' => G
@@ -42,6 +44,8 @@ object DNA5 extends Alphabet {
     case 'N' | 'n' => N
     case _ => A
   }
+
+  override def isCaseSensitive: Boolean = false
 
   override def bitUtil = Dna5BitUtil
 

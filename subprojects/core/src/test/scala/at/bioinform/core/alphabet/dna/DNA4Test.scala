@@ -1,6 +1,5 @@
-package at.bioinform.core
+package at.bioinform.core.alphabet.dna
 
-import at.bioinform.core.alphabet.dna._
 import at.bioinform.generators.Generate
 import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
