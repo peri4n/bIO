@@ -1,7 +1,6 @@
 package at.bioinform.core.alphabet.dna
 
 import at.bioinform.generators.Generate
-import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{FunSpec, Matchers}
 
@@ -53,7 +52,7 @@ class DNA4Test extends FunSpec with Matchers with GeneratorDrivenPropertyChecks 
     }
 
     it("toInt and fromInt should lead to identity") {
-      forAll(Gen.oneOf(0, 1, 2, 3)) { number: Int =>
+      forAll(Generate.nuc4Index) { number: Int =>
         DNA4.toInt(DNA4.fromInt(number)) shouldBe number
       }
     }

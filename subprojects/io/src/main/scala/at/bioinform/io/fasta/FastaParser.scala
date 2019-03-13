@@ -13,10 +13,10 @@ import scala.collection.mutable
 import scala.util.{Failure, Success, Try}
 
 /**
- * Flow that parses an incoming byte stream representing FASTA-formatted sequence data.
- *
- * Note: This flow expects it's income in chunks of lines!!!
- */
+  * Flow that parses an incoming byte stream representing FASTA-formatted sequence data.
+  *
+  * Note: This flow expects it's income in chunks of lines!!!
+  */
 private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, FastaEntry]] {
 
   type FastaStep[A] = StateT[Try, State, A]
@@ -46,7 +46,7 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
         val header = buffer.substring(1, headerEnd)
         val sequence = buffer.substring(headerEnd, buffer.length)
         buffer.clear()
-        Success((copy( buffer = this.buffer), Some(FastaEntry(Id(header), Seq(sequence)))))
+        Success((copy(buffer = this.buffer), Some(FastaEntry(Id(header), Seq(sequence)))))
       } else {
         if (sequenceEnd == -1) {
           Success((this, None))
@@ -69,12 +69,16 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
 
   val FastaHeaderStart = ">"
 
-  private def appendLine(line: String): FastaStep[Unit] = StateT.modifyF { _.appendLine(line) }
+  private def appendLine(line: String): FastaStep[Unit] = StateT.modifyF {
+    _.appendLine(line)
+  }
 
-  def entry(greedy: Boolean = false): FastaStep[Option[FastaEntry]] = StateT { _.extractEntry(greedy) }
+  def entry(greedy: Boolean = false): FastaStep[Option[FastaEntry]] = StateT {
+    _.extractEntry(greedy)
+  }
 
   def add(line: String, greedy: Boolean = false): FastaStep[Option[FastaEntry]] = {
-      for {
+    for {
       _ <- appendLine(line)
       entry <- entry(greedy)
     } yield entry
@@ -90,9 +94,9 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
         val line = grab(in).decodeString(StandardCharsets.UTF_8)
 
         val Success((newState, ret)) = add(line).run(state)
-         ret match {
+        ret match {
           case Some(entry) => push(out, entry)
-          case None         => pull(in)
+          case None => pull(in)
         }
 
         state = newState
@@ -102,7 +106,7 @@ private[fasta] object FastaParser extends GraphStage[FlowShape[ByteString, Fasta
         val Success((_, ret)) = add("", true).run(state)
         ret match {
           case Some(entry) => push(out, entry)
-          case None         => pull(in)
+          case None => pull(in)
         }
         super.onUpstreamFinish()
       }

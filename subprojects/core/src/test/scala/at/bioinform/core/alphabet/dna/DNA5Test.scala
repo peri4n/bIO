@@ -1,7 +1,6 @@
 package at.bioinform.core.alphabet.dna
 
 import at.bioinform.generators.Generate
-import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{FunSpec, Matchers}
 
@@ -57,7 +56,7 @@ class DNA5Test extends FunSpec with Matchers with GeneratorDrivenPropertyChecks 
     }
 
     it("toInt and fromInt should lead to identity") {
-      forAll(Gen.oneOf(0, 1, 2, 3, 4)) { number: Int =>
+      forAll(Generate.nuc5Index) { number: Int =>
         DNA5.toInt(DNA5.fromInt(number)) shouldBe number
       }
     }

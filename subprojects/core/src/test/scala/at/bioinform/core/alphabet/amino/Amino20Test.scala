@@ -1,7 +1,6 @@
 package at.bioinform.core.alphabet.amino
 
 import at.bioinform.generators.Generate
-import org.scalacheck.Gen
 import org.scalatest.{FunSpec, Matchers}
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
@@ -10,7 +9,7 @@ class Amino20Test extends FunSpec with Matchers with GeneratorDrivenPropertyChec
   describe("Amino20") {
 
     it("have the correct elements") {
-      Amino20.elements shouldBe List(A, C, D, E, F, G, H, I, K, L, M, N, P, R, S, T, V, W, Y)
+      Amino20.elements shouldBe List(A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y)
       Amino20.size shouldBe 20
     }
 
@@ -54,7 +53,7 @@ class Amino20Test extends FunSpec with Matchers with GeneratorDrivenPropertyChec
     }
 
     it("toInt and fromInt should lead to identity") {
-      forAll(Gen.oneOf(0, 1, 2, 3)) { number: Int =>
+      forAll(Generate.amino20Index) { number: Int =>
         Amino20.toInt(Amino20.fromInt(number)) shouldBe number
       }
     }
